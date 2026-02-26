@@ -1,6 +1,6 @@
 % Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
 % ustawia sie przede wszystkim jezyk oraz rodzaj (lic/inz/mgr) pracy.
-\documentclass[shortabstract]{iithesis}
+\documentclass[english,mgr,shortabstract]{iithesis}
 
 \usepackage[utf8]{inputenc}
 
@@ -10,15 +10,15 @@
 % Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
 % zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
 % polecenia \fmlinebreak.
-\polishtitle    {Wymagający złamania wierszy\fmlinebreak tytuł pracy w języku polskim}
-\englishtitle   {English title}
+\polishtitle    {Predykcja cech słuchanej muzyki na podstawie sygnału EEG}
+\englishtitle   {Prediction of listened music features from eeg signal}
 \polishabstract {\ldots}
-\englishabstract{\ldots}
+\englishabstract{We consider possibility of decoding music features from EEG signal. We utilize datasets of joint music and EEG recordings. First we ask whether song name can be predicted [and get a mixed answer]. We explain the result with a DTW experiment. We further ask whether music features can be predicted. For that we classify eeg snippet into "slow" and "fast" based on tempo of related music snippet.}
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Maksymilian Debeściak}
 % w przypadku kilku promotorow, lub koniecznosci podania ich afiliacji, linie
 % w ponizszym poleceniu mozna zlamac poleceniem \fmlinebreak
-\advisor        {dr Jan Kowalski}
+\advisor        {dr Paweł Rychlikowski}
 %\date          {}                     % Data zlozenia pracy
 % Dane do oswiadczenia o autorskim wykonaniu
 %\transcriptnum {}                     % Numer indeksu
@@ -43,11 +43,12 @@
 
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 
-\chapter{Introduction}
+\input{introduction}
+\input{eeg_signal}
+\input{datasets}
+\input{methods}
 
-hello
 
-\ldots
 
 %%%%% BIBLIOGRAFIA
 
