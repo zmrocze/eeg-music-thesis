@@ -1,0 +1,74 @@
+PMID- 36635340
+OWN - NLM
+STAT- MEDLINE
+DCOM- 20230116
+LR  - 20230301
+IS  - 2045-2322 (Electronic)
+IS  - 2045-2322 (Linking)
+VI  - 13
+IP  - 1
+DP  - 2023 Jan 12
+TI  - Neural decoding of music from the EEG.
+PG  - 624
+LID - 10.1038/s41598-022-27361-x [doi]
+LID - 624
+AB  - Neural decoding models can be used to decode neural representations of visual, 
+      acoustic, or semantic information. Recent studies have demonstrated neural 
+      decoders that are able to decode accoustic information from a variety of neural 
+      signal types including electrocortiography (ECoG) and the electroencephalogram 
+      (EEG). In this study we explore how functional magnetic resonance imaging (fMRI) 
+      can be combined with EEG to develop an accoustic decoder. Specifically, we first 
+      used a joint EEG-fMRI paradigm to record brain activity while participants 
+      listened to music. We then used fMRI-informed EEG source localisation and a 
+      bi-directional long-term short term deep learning network to first extract neural 
+      information from the EEG related to music listening and then to decode and 
+      reconstruct the individual pieces of music an individual was listening to. We 
+      further validated our decoding model by evaluating its performance on a separate 
+      dataset of EEG-only recordings. We were able to reconstruct music, via our 
+      fMRI-informed EEG source analysis approach, with a mean rank accuracy of 71.8% 
+      ([Formula: see text], [Formula: see text]). Using only EEG data, without 
+      participant specific fMRI-informed source analysis, we were able to identify the 
+      music a participant was listening to with a mean rank accuracy of 59.2% 
+      ([Formula: see text], [Formula: see text]). This demonstrates that our decoding 
+      model may use fMRI-informed source analysis to aid EEG based decoding and 
+      reconstruction of acoustic information from brain activity and makes a step 
+      towards building EEG-based neural decoders for other complex information domains 
+      such as other acoustic, visual, or semantic information.
+CI  - © 2023. The Author(s).
+FAU - Daly, Ian
+AU  - Daly I
+AD  - Brain-Computer Interfacing and Neural Engineering Lab, Department of Computer 
+      Science and Electronic Engineering, University of Essex, Colchester, CO4 3SQ, UK. 
+      i.daly@essex.ac.uk.
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20230112
+PL  - England
+TA  - Sci Rep
+JT  - Scientific reports
+JID - 101563288
+SB  - IM
+MH  - Humans
+MH  - *Brain Mapping/methods
+MH  - *Music
+MH  - Electroencephalography
+MH  - Auditory Perception
+MH  - Auscultation
+PMC - PMC9837107
+COIS- The authors declare no competing interests.
+EDAT- 2023/01/13 06:00
+MHDA- 2023/01/17 06:00
+PMCR- 2023/01/12
+CRDT- 2023/01/12 23:17
+PHST- 2021/12/21 00:00 [received]
+PHST- 2022/12/30 00:00 [accepted]
+PHST- 2023/01/12 23:17 [entrez]
+PHST- 2023/01/13 06:00 [pubmed]
+PHST- 2023/01/17 06:00 [medline]
+PHST- 2023/01/12 00:00 [pmc-release]
+AID - 10.1038/s41598-022-27361-x [pii]
+AID - 27361 [pii]
+AID - 10.1038/s41598-022-27361-x [doi]
+PST - epublish
+SO  - Sci Rep. 2023 Jan 12;13(1):624. doi: 10.1038/s41598-022-27361-x.

@@ -66,8 +66,8 @@
 \newcommand \transcriptnum   [1] {\gdef\@transcriptnum{#1}}
 \newcommand \advisorgen      [1] {\gdef\@advisorgen{#1}}
 
-\DeclareOption{polish}       {\setboolean{Polish@Main}{false} \PassOptionsToPackage{polish,english}{babel}}
-\DeclareOption{english}      {\setboolean{Polish@Main}{true}\PassOptionsToPackage{english,polish}{babel}}
+\DeclareOption{polish}       {\setboolean{Polish@Main}{true} \PassOptionsToPackage{polish,english}{babel}}
+\DeclareOption{english}      {\setboolean{Polish@Main}{false}\PassOptionsToPackage{english,polish}{babel}}
 \DeclareOption{lic}          {\renewcommand \@thesislevel {licencjacka}}
 \DeclareOption{inz}          {\renewcommand \@thesislevel {in\.zynierska}}
 \DeclareOption{mgr}          {\renewcommand \@thesislevel {magisterska} \renewcommand \@studydegree {II}}

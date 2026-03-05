@@ -1,0 +1,150 @@
+
+\chapter{Results}
+
+\section{Song name prediction}
+
+We start with a task of predicting the song name of a listened song, based on the EEG signal.
+We split the MUSIN-G dataset into recordings of 14 subjects as train and remaining 6 subjects as test (for neural net split into test and val).
+We then train a model to predict the song name from the EEG signal.
+We achieve the below results for each variant of the tested model.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\
+    \hline
+    KNN     & 0.1374 \\
+    SVM     & 0.1229 \\
+    XGBoost & 0.1668 \\
+    NN      & --- \\
+    \hline
+  \end{tabular}
+  \caption{Song name prediction accuracy: subject-wise split.}
+  \label{tab:song-prediction}
+\end{table}
+
+
+Our results are comparable to the study by Pandey and others\cite{pandey} in which researchers achieved 12.5\% mean subject accuracy (random classifier gives \(  \frac{1}{12} = 0.08(3) \))
+
+In the above study researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
+by taking initial \( n \) seconds of each recording as training data and remaining seconds as testing data. The study compares results that can be achieved for the few chosen \( n \) parameters (\(3, 5, 10, 20\)) achieving higher accuracy for bigger training partitions.
+The results in this variant of the experiment are much higher (\( 84\% \)) than in the previous variant.
+We are able to reproduce these results and for \( n=20 \) achieve accuracies like in the table:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\
+    \hline
+    XGBoost & 0.85 \\
+    SVM     & 0.57 \\
+    KNN     & 0.64 \\
+    NN     & - \\
+    \hline
+  \end{tabular}
+  \caption{Song id prediction accuracy: temporal split.}
+  \label{tab:song-id-temporal-split}
+\end{table}
+
+To us this poor generalization suggests that the model in this second variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
+We test the hypothesis with two experiments. 
+
+First, we run similar experiment on a the BCMI-training dataset. The dataset contains from 144 up-to 432 trials recorded for a single subject.
+The recordings share between each other the ``emotionality'' of the listened music but no listened song repeats across the dataset as the songs are computer generated per each trial.
+We obtain that, similarly to the study, classifiers are able with high accuracy to predict the trial id from the EEG signal. 
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\
+    \hline
+    XGBoost & 0.78 \\
+    SVM     & 0.91 \\
+    KNN     & 0.88 \\
+    NN      & ---    \\
+    \hline
+  \end{tabular}
+  \caption{Song id prediction experiment in the single subject variant.}
+  \label{tab:song-id-single-subject}
+\end{table}
+
+Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between train and test and are not forced to generalize beyond that, we propose a given experiment.
+We attempt to predict the trial id using DTW algorithm.
+
+The DTW in the most basic form is a method of measuring a distance between two time series, by finding an optimal alignment between them.
+Such alignment is a match between points of one time series and points of the other time series, that minimizes the sum of distances between matched points, 
+starts and ends at the two matched ends of the two time series and is monotonic in between.
+We employ a generalized version called approximate-subsequence-DTW, which can be defined by:
+\begin{enumerate}
+  \item Given two sequences $A$ and $B$, it finds a match between an infix of $A$ and $B$.
+  \item The summed distances between the matched points are within the cost allowance.
+  \item The matched infix is of maximal length.
+\end{enumerate}
+
+For a single subject of BCMI-training dataset, we predict the trial id of a test trial by finding across all training trials,
+the one that scores the highest when calculating the approximate-subsequence-DTW distance between the test trial and the training trial.
+We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
+With this simple method we achive 50.83\% test accuracy.
+% Accuracy: 61/120 = 50.83%
+The experiment is meant to showcase that such direct pattern matching is possible and therefore --- it is possible for the model learn it and rely on it greatly, with little generalization capability.
+
+\section{Music ``density'' prediction}
+
+Looking for musical features visible through the EEG recording we define a ``density'' of a music snippet and by extension the paired EEG snippet.
+First, we mark note onsets in the music recordings. 
+We do that by looking at the music's mel spectrograms and marking the time points in which the spectrogram's energy increases significantly, weighting the changes in the high frequencies more (High-Frequency-Content method).
+The HFC method was visually compared to other methods and chosen as seemingly best.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{imgs/mel_onset_hvha1.wav.png}
+  \includegraphics[width=\linewidth]{imgs/mel_onset_hvha2.wav.png}
+  \caption{Spectrograms of two 4s music snippets with marked note onsets as detected by the algorithm.}
+  \label{fig:mel-onsets}
+\end{figure}
+
+Now, for a chosen length of a time window, we get a certain distribution on number of note onsets within windows of this length.
+Calculating the median number, we can split the snippets into two classes: the ``sparse'' class with a number of onsets below the median and the ``dense'' class with a number of onsets above the median.
+We calculate the median only on the training set and define a classification task of predicting the class of a snippet based on the paired EEG snippet.
+We hope a success in this task may be a stronger indicator that some musical features are present and can be decoded from the EEG signal.
+
+Results are shown in the below table.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\
+    \hline
+    XGBoost & 0.5407 \\
+    SVM     & 0.5093 \\
+    KNN     & 0.5264 \\
+    \hline
+  \end{tabular}
+  \caption{Music density prediction accuracy.}
+  \label{tab:density-prediction}
+\end{table}
+
+% \section{EEG analysis}
+
+% We use this preprocessing with these methods.
+
+% potrzeba: "eeg wygląd", eeg spektrogram, pipeline diagram and pictures, graph acc/subject
+
+% \section{Music id prediction}
+
+% similar:
+%  - https://arxiv.org/abs/2009.08793: cnn musin-g
+%  - https://www.researchgate.net/publication/360792627_Music_Identification_Using_Brain_Responses_to_Initial_Snippets: 
+
+% \subsection{on musing}
+
+% \subsubsection{12 songs: 90\% }
+% \subsubsection{generalization: 20\% }
+
+% \subsection{on bcmi}
+
+% potrzeba: wyniki

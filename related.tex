@@ -1,0 +1,68 @@
+
+\chapter{Related work}
+
+\section{Music classification}
+
+Classification of listened music based on EEG signal has been tackled in various forms by several researchers.
+
+Already 2011 a linear logistic-regression classifier was succesfully used to classify ERP (event-related potential) segments of EEG signal into listened songs\cite{rebecca}.
+The focus on ERPs means that every little over 3 second long trial is its own snippet for classification therefore EEG snippets are aligned in time --- all start when music started playing in the experiment scenario.
+
+In a similar paradigm Sterni and others\cite{sterni} classify listened music using first a dimension reduction technique to learn signal components and then a CNN with single convolution layer.
+They also succeed in classifying trials based on meter of a song (3/4 versus 4/4).
+
+Two studies related by the collected dataset later published as MUSIN-G tackle the problem of classifying listened music based on EEG signal in a paradigm similar to ours, 
+where a snippet for classification is randomly sampled from the whole recording.
+Study by Lawhatre uses multilevel wavelet method which finds frequency components at various time scales to extract lower level features and then tests various models like knn, decisions trees, SVM and CNN's\cite{lawhatre}.
+The study establishes usefulness of the dataset.
+
+The second study applies 3 layer CNN to either time-domain EEG signal or the frequency-domain spectrogram of the EEG\cite{guess}.
+It doesn't achieve better than random classifier in the time-domain case.
+But in the frequency-domain case, the best CNN model with ~1.6M parameters achieved over 80\% accuracy.
+In the cross participant setting though the model failed to generalize.
+
+Existance of signal related to music in the EEG signal poses the question what about imagining music?
+In a 2021 paper researchers attempt classifying EEG by first decoding EEG from music.\cite{silence}
+The musical input is transformed to a binary vector that encodes note onsets together with an auxiliary vector that encodes note expected surprise
+as calculated by a mathematical model of musical expectation in sheet music.
+For every music track, the predicted matching EEG is compared against the real EEG signal and the one with strongest match is chosen.
+Seperate models where trained for the listened and imagined music, but it was also shown that they relate to each other where the listened is lagged version of the imagined.
+
+\subsection{Representation learning}
+
+Stober and others aproach a more general problem of learning representations of EEG signal with a convolutional autoencoder\cite{stober}.
+To fight small and noisy dataset, model is trained for a given trial to reconstruct possibly different trial but of the same subject and stimulus.
+They are able to train CNN and SVC classifiers to predict the song id from the hidden representation of the autoencoder.
+
+This suggests the question if a common representation space could be found for both music and EEG signal or the two can be related to each other.
+Researchers try answering the second question by comparing the distance matrices within the sets of extracted audio features and extracted EEG features\cite{foster}.
+The study reports mixed results.
+
+% \cite{rebecca} - 2011, quadratically regularized linear logistic-regression classifier, 3s event-aligned EEG segments
+
+% \cite{sterni} - 2016, time signature (3/4 versus 4/4), lyrics (music with lyrics versus
+% music without), tempo (slow versus fast), and instrumentation. classification 28\% acc of real but not imagined
+
+% \cite{lawhatre} - collects dataset, extracts lowdim features (multilevel wavelet, ours is like one chosen level) and tests with various models, trial-split
+% \cite{guess} - created dataset, trial split, cnn time and frequency domain experiments
+
+% \cite{stober} - deep feature learning using CAE
+
+% \cite{foster} - performs comparison of EEG extracted features as dataset and music features dataset (with distance matrices) AND by using linear regression
+% also does song id prediction with logistic regression and 28\% accuracy
+
+% \cite{silence} - found similarity between brains neural responses to note onset and surprise between listened and imagined
+
+
+
+\section{Music reconstruction}
+
+Maybe-TODO
+
+% Daly\cite{daly} succesfully tackles the harder problem of reconstructing
+
+% https://gemini.google.com/app/d5570707986ff8b1
+
+% https://gemini.google.com/app/b6c26a36626bc5ee
+
+% Full decoding.

@@ -1,22 +1,166 @@
 \chapter{EEG Signal}
 
-Elementy:
 
-historia aparatury:
- - pierwsze aparaty
- - aparaty współczesne
- - system 10-20:
-  * bcmi 10-20
-  * musing: GSN-HydroCel-129 https://gemini.google.com/app/7785213939c45409
+\section{Overview}
 
-charakterystyki:
-- niestacjonarne
-- szum
-- artefakty
+Electroencephalography (EEG) is a non-invasive technique used to record electrical activity of the brain\cite{Mushtaq2024}.
+It involves placing electrodes on the scalp to record electrical activity of the brain --- the electroencephalogram (also EEG).
+Each electrode records the voltage fluctuations resulting from the synchronized discharges of the working neurons in the brain.
+By subtracting the reference electrode reading from a reading of an electrode of interest we cancel out the common environmental noise and get a signal that constitues a single channel of an EEG recording.
+The amplitude of resulting signal is in the order of microvolts and very sensitive to any head movements, which need to be minimized during a recording session.
+Modern equipment captures these fluctuations with upwards of 1000 Hz high temporal resolution, allowing for precise linking between the brain's recorded activity and external stimuli.
 
-preprocessing:
- - filtracja
- - ICA
- - artifact classification and removal
- - band power
- - averaging
+
+\section{History}
+
+A British physician Richard Caton in the year 1875 was first to discover that the brain - specifically of rabbits and monkeys - elicits electrical activity and furthermore that the activity seems to have a relation to its function\cite{caton}. For his discovery he used a galvanometer, invented earlier in 1820 and used in laboratories and telecommunication.
+Although at the time of his discovery it was already known that nerves conduct electrical signals and that these signals are used to trigger muscle tissue to contract\cite{mattucci1}\cite{matteucci2}.
+In 1901 a Dutch medical doctor Willem Einthoven invented a more precise string galvanometer and used it to record an electrocardiogram (ECG)\cite{about_einthoven}. By placing electrodes on left and right arms and a leg he measured the electrical signal produced by a beating heart. The device functioned by placing a fine conducting string within a magnetic field created by two powerful electromagnets; the electrical signal caused this string to deflect. He was later awarded the Nobel Prize in Physiology or Medicine for his discovery.
+Later in 1912 an Ukrainian physiologist Vladimir Pravdich-Neminsky used this invention and published the first EEG recording recorded from a dog\cite{about_vladimir}.
+
+In 1924 --- which coincidentally was the year when Einthoven got awarded his Nobel Prize --- a German psychiatrist Hans Berger looking for the physiological basis for telepathy recorded the first human EEG and discovered ``alpha wave''  --- the frequency present in the signal when a person is awake\cite{about_berger}.
+His discovery was first met with skepticism\cite{Mushtaq2024}, which has changed once a decade later Frederick Gibbs and others using EEG described specific repeatable pattern in the electrical activity during epilepsy\cite{about_gibson}.
+Later in the 50s the EEG signal was used to research sleep.
+In 1953 researchers discovered REM (Rapid Eye Movement) sleep phase, characterized by rapid eye movements and high--frequency low--voltage EEG activity, akin to alertness, which is often the phase when dreaming occurs\cite{rem_sleep}.
+Later a standardized way to divide sleep into sleep stages based on EEG was developed\cite{sleep_stage}.
+
+Already 1973 saw first demonstration of brain-computer interface (BCI), where EEG signal was used to control a cursor on a screen\cite{vidal}.
+This decade also saw first use of computers to analyze the EEG signal and later the analysis and collection of EEG data went purely digital.
+In the 1980s laboratories started syncing EEG recording with video recordings of the subject, allowing for more detailed studies of the relationship between brain activity and behavior\cite{gloor}.
+
+Modern day 128 or 256 electrode systems allow for spatially detailed recordings of brain activity including source localization.
+EEG is now widely used in the clinical settings for diagnosis of sleep disorders\cite{sleep_medicine} and localization and clasification of seizures\cite{fisher}.
+We also see a rise in availability of consumer-grade portable EEG devices, which are used for various applications including neurofeedback, meditation and sleep improvements.
+
+\section{Characteristics}
+
+The EEG signal has few below characteristics which make it extra challenging to process and analyze.
+
+\subsection{Non-stationarity}
+
+Non-stationary process is one whose statistical properties - like mean, variance or autocorrelation - change over time. 
+The EEG signal is non-stationary\cite{nonstationary} because the brain's activity is dynamic and influenced by various internal and external factors, such as cognitive processes, sensory inputs, emotional states, and physiological changes like changes in the skin impedance.
+Without any adaptations this renders many classical statistical methods of data analysis ineffective.
+This suggests that normalization of signal data should be done on per window basis.
+
+\subsection{Artifacts}
+
+As the amplitude of neural oscillations as seen in the EEG signal is so low, requiring precise measurement, even small movements and external factors can introduce significant noise and artifacts into the recordings.
+Specifically any head movements or eye blinks cause large artifacts in the signal. It can also happen that an electrode loses contact with the skin or that heart-beating appears from an electrode placed near a large blood vessel.
+Given small sample size, this often means the need to mark and remove the artifacts from the data.
+
+\subsection{Expensive and time-consuming data collection}
+
+Collecting EEG data requires specialized expensive equipment and qualified personnel.
+It also requires finding subjects willing to participate in the study and fitting the study requirements.
+For these reasons EEG datasets are often small, counting hundreds to thousands of samples collected from up to few dozen subjects.
+
+\subsection{Noise}
+
+Given the low amplitude of the EEG signal it is very susceptible to any external noise.
+Commonly EEG data preprocessing includes filtering the 50 or 60 Hz power line noise, which appears as thick fuzz on the signal.
+In studies that combine music listening with EEG collection, the music would be a source of noise.
+To mitigate studies can use electromagnetically shielded insert earphones\cite{nozaradan}, which pump the sound directly to the ear via hollow plastic tubes, keeping the transducer (the part that creates sound) futher away from the EEG aparatus.
+
+
+\subsection{Signal-to-noise ratio}
+
+Given that EEG measures a combined electrical activity of millions of neurons, of a brain that reacts and processes multitude of internal and external stimuli, 
+it is given that the observed reaction to experimental stimulus as witnessed from the data is going to be mixed with a lot of other brain activity, which is not related to the stimulus.
+Furthermore, the observed reaction is going to be different across subjects and even across different recording sessions of the same subject.
+For this reason the signal-to-noise ratio (SNR) of the EEG data is often very low, making it difficult to extract meaningful information from the data and to link it to the experimental stimulus.
+Common way of analyzing EEG data involves averaging EEG response at fixed interval after presenting stimulus.
+
+\section{Preprocessing}
+
+To mitigate the above challenges, various preprocessing techniques are used to clean the data and extract relevant features.
+% Some of these techniques became standardized in a form of python or matlab libraries, which are widely used in the field.
+We generally consider the EEG signal to be a two-dimensional array of shape (n\_channels, n\_timepoints), where n\_channels is the number of electrodes used in the recording and n\_timepoints is the number of time points recorded for each channel.
+
+\subsection{Filtering}
+
+Filtering is a crucial preprocessing step in EEG signal processing. It involves removing unwanted frequency components from the signal, which can be caused by various sources of noise and artifacts.
+Commonly signal is processed through a high-pass filter (e.g. 1Hz) to remove slow drifts caused by reasons like sweating and changes in skin impedance.
+It can be processed as well through a low-pass filter (e.g 30Hz-100Hz) to remove high-frequency noise and focus on much better understood lower frequencies in the EEG data.
+The power noise is removed with a notch filter at 50 or 60 Hz, depending on the local power line frequency of the recording environment.
+
+\subsubsection{Band power processing}
+
+Common signal processing technique - also applied to EEG data - is to filter the signal into chosen frequency bands and then calculate the power of the signal in each band, which is a measure of the strength of the oscillations in that band.
+Over the years, an array of research was done linking specific frequency bands in the EEG signal to specific cognitive processes, with different roles linked to different frequency bands\cite{basar}.
+This suggests the frequency bands to be used for band power processing.
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\hline
+\textbf{Band} & \textbf{Frequency range} & \textbf{Associated states / processes} \\
+\hline
+Delta   & 0.5--4 Hz  & Deep sleep, unconscious processes\cite{harmony} \\
+Theta   & 4--8 Hz    & Drowsiness\cite{lal}, meditation\cite{lagapulos}, memory encoding\cite{klimesch} \\
+Alpha   & 8--13 Hz   & Relaxed wakefulness, eyes closed, idle state\cite{alastair} \\
+Beta    & 13--30 Hz  & Active thinking, concentration, alertness\cite{engel}\cite{ray} \\
+Gamma   & 30--100 Hz & Higher cognitive functions\cite{bertrand}\cite{fries} \\
+\hline
+\end{tabular}
+\caption{EEG frequency bands and their associated cognitive states.}
+\label{tab:eeg_bands}
+\end{table}
+
+
+\subsection{Independent Component Analysis}
+
+Independent Component Analysis (ICA) is a method of separating recorded EEG channels into independent components.
+Concretely, naming the EEG signal \( \mathbf{x} \) and result of applying ICA \( \mathbf{s} \), ICA finds an inverse linear transformation to a matrix \( \mathbf{A} \) and some \( \mathbf{s} \):
+
+\[
+\mathbf{x} = \mathbf{A}\mathbf{s}
+\]
+
+such that the channels of \( \mathbf{s} \) are:
+\begin{itemize}
+  \item{statistically independent}
+  \item{non-Gaussian}
+  \item{linearly mixed in the observed signal \( \mathbf{x} \)}
+\end{itemize}
+Here \( \mathbf{x} \) is of dimension (n\_channels, n\_timepoints) 
+and \( \mathbf{s} \) is of dimension (n\_components, n\_timepoints), 
+where n\_components is a chosen and \( \mathbf{A} \) is of dimension (n\_channels, n\_components).
+
+In this formulation the solution \( \mathbf{s} \) is not unique and specifically there is no inherent ordering to the independent components.
+Also, the transform is applied independently to each recorded EEG snippet, making the following analysis a harder problem.
+To mitigate this an ordering can be fixed by sorting the independent components by how much variance of the original signal they explain (Variance Accounted For (VAF)).
+
+\subsection{Artifact classification and removal}
+
+Once a signal is decomposed into independent components, we gain a potent tool of artifact removal.
+By classifying a component into what type of activity it represents --- e.g. eye blinks, heart beats, muscle activity, brain activity --- we can choose to remove the components that are classified as artifacts and reconstruct the signal without them.
+The classification can be done with a neural network trained on expert-labeled data\cite{iclabel}. Modern day such trained classifier is a common include in EEG processing libraries.
+
+\subsection{Normalization}
+
+There is few reasonable ways to normalize the signal, like: z-score normalization, min-max normalization or robust normalization.
+Because of the non-stationarity of the signal, it is common to apply normalization on a per window basis, where window is a short segment of the full recording.
+What remains to be chosen is whether the normalization should apply per channel independently or jointly across all channels.
+
+
+
+% historia aparatury:
+%  - pierwsze aparaty
+%  - aparaty współczesne
+%  - ! system 10-20:
+%   * bcmi 10-20
+%   * musing: GSN-HydroCel-129 https://gemini.google.com/app/7785213939c45409
+
+% charakterystyki:
+% - niestacjonarne
+% - szum
+% - artefakty
+
+% preprocessing:
+%  - filtracja
+%  - ICA
+%  - artifact classification and removal
+%  - band power
+%  - averaging
