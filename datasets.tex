@@ -1,7 +1,54 @@
 \chapter{Datasets}
 
-musing
+We test our hypotheses on two datasets: MUSIN-G\cite{musing} and what we call BCMI-training\cite{bcmi}.
 
-grupa bcmi:
- - opis eksperymentu
- - używamy treningowego, choć można połączyć
+\section{MUSIN-G}
+
+Is a dataset of joint music and EEG recordings of 20 non-musician subjects, aged 22-28 years.
+Each one was presented with every one of 12 songs of various genres from Indian Folk to Electronic Dance.
+
+\section{BCMI-training}
+
+BCMI-training is a dataset of joint music and EEG recordings of 10 participants aged 19-30.
+It is part of a series of datasets collected during a series of studies that investigate human reaction to affective musical stimuli and whether reported emotionality can be influenced by music\cite{nicolaou}.
+The music played in this study is fully computer generated and no track repeats across the dataset.
+The musical snippets are tagged with emotionality labels (9 possibilities on valence/arousal grid) which are inputs to the music generation algorithm.
+In the study, subjects listened to a musical snippet of about 20 seconds of length and immedietely after to another snippet, but of
+different emotionality.
+For our purpose we split such trials into two separate recordings, one for each snippet.
+
+\section{Dataset processing}
+
+Adding to the methods, we describe how a dataset is loaded to a study using our library.
+
+We unify various analyzed datasets under the `EEGMusicDataset` class, which provides a common interface to access the data and metadata of the recordings.
+Then, various preprocessing functions are applied to the data, the evaluation of which is lazy.
+Lastly, `StratifiedSamplingDataset` wrapper gets applied which samples the data in a stratified way, as described in the methods chapter.
+
+\begin{verbatim}
+ds = EEGMusicDataset.load_ondisk(Path("..."))
+
+ds = MappedDataset(ds, lambda x: 
+  ica_band_power_trial(
+    rereference_trial(
+      filter_trial(
+        notch_filter_trial(x, 50.0), l_freq=0.5, h_freq=50.0
+      )
+    ),
+    n_components=12,
+    bands = [(0.5, 4), (4, 8), (8, 13), (13, 30), (30, 45)],
+    window_sec= 2.0,
+    hop_sec = 0.1,
+  )
+)
+
+ds = StratifiedSamplingDataset(ds, n_strata=10, trial_length_secs=Fraction(3, 1))
+
+\end{verbatim}
+
+% musing
+
+
+% grupa bcmi:
+%  - opis eksperymentu
+%  - używamy treningowego, choć można połączyć

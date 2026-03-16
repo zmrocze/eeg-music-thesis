@@ -1,11 +1,102 @@
+
 \chapter{Methods}
 
-\section{Neural Networks}
+\section{EEG Preprocessing}
 
-\section{XGBoost}
+First, we filter the EEG signal with a notch filter at the line frequency (50Hz).
+Then we apply a bandpass filter between 0.5Hz and 50Hz. 
+We rereference the data.
+Then we apply the ICA transform, removing the artifact components and reducing the dimensionality from 128 channels to 12.
+We calculate band power for every ICA component and the standard EEG frequency bands and concatenate the results. 
+Before concatenation we apply z-score normalization per frequency band.
 
-\section{SVM}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{imgs/eeg_signal_10s_bl_wh.png}
+    \caption{EEG signal: 10 second snippet of raw unprocessed EEG signal.}
+    \label{fig:eeg-raw}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{imgs/ica_signal_10s_bl_wh.png}
+    \caption{EEG signal: ICA components.}
+    \label{fig:eeg-ica}
+  \end{minipage}
+\end{figure}
 
-https://pubmed.ncbi.nlm.nih.gov/40039043/
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{imgs/ica_band_power_20s.png}
+  \caption{Band power of ICA components: 20 second snippet of preprocessed signal.}
+  \label{fig:ica-band-power}
+\end{figure}
 
-\section{KNN}
+In training we sample an EEG signal snippet of 3 seconds of length from the full recording.
+It was checked that varying length from 3s, 5s, 10s and 20s has impact on classification performance with longer snippets yielding better accuracy scores\cite{pandey}.
+This acts like a data augmentation method.
+To avoid the Birthday Problem when randomly sampled segments often strongly overlap over part of the full recording, we 
+use stratified sampling method, where first one of \( k \) segments is picked (one after another) and then a random snippet starting within chosen segment is sampled, spreading the distribution more evenly across the whole recording.
+
+\section{Note onset feature extraction}
+
+For the task that detecting note onsets we use essentia\cite{essentia} library with their HFC onset detection method to transform the raw wave audio signal into a list of note onset start time.
+
+\section{Models}
+
+We use four different model types: KNN, SVM, XGBoost and a Convolutional Neural Network.
+
+For discussion of KNN, SVM and XGBoost models we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
+
+We define 3 related CNN networks, for the task of classification in two variants: to input band power processed data or raw EEG data, and for the task of reconstruction of music.
+The classification networks are convolutional neural networks with 3 convolutional layer and a fully-connected layer.
+They differ in the input dimensionality they are meant to work with: one inputs EEG images after preprocessing, including band power calculation which leaves the 1s snippets to be of shape \( 60\cross 10\).
+The other inputs raw EEG data, which has shape \( 129\cross 256\) and is used for the ablation study in the appendix. The models have 136164 and 249380 parameters respectively.
+
+% table with layers of cnn 
+\begin{table}[h]
+\centering
+\begin{tabular}{l|ll}
+\hline
+\textbf{Layer Type} & \textbf{Filter Size} & \textbf{Input → Output} \\
+\hline
+Conv2D (freq) & $1 \times 5$ & $[2, 1, 60, 10] \to [2, 16, 60, 10]$ \\
+BatchNorm2D & - & $[2, 16, 60, 10] \to [2, 16, 60, 10]$ \\
+Conv2D (time) & $5 \times 1$ & $[2, 16, 60, 10] \to [2, 32, 60, 10]$ \\
+ELU & - & $[2, 32, 60, 10] \to [2, 32, 60, 10]$ \\
+MaxPool2D & $2 \times 2$ & $[2, 32, 60, 10] \to [2, 32, 30, 5]$ \\
+Dropout & - & $[2, 32, 30, 5] \to [2, 32, 30, 5]$ \\
+\hline
+Conv2D (freq) & $1 \times 3$ & $[2, 32, 30, 5] \to [2, 64, 30, 5]$ \\
+BatchNorm2D & - & $[2, 64, 30, 5] \to [2, 64, 30, 5]$ \\
+Conv2D (time) & $3 \times 1$ & $[2, 64, 30, 5] \to [2, 128, 30, 5]$ \\
+ELU & - & $[2, 128, 30, 5] \to [2, 128, 30, 5]$ \\
+MaxPool2D & $2 \times 2$ & $[2, 128, 30, 5] \to [2, 128, 15, 2]$ \\
+Dropout & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+\hline
+Conv2D (freq) & $1 \times 3$ & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+BatchNorm2D & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+Conv2D (time) & $3 \times 1$ & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+ELU & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+MaxPool2D & $2 \times 2$ & $[2, 128, 15, 2] \to [2, 128, 7, 1]$ \\
+Dropout & - & $[2, 128, 7, 1] \to [2, 128, 7, 1]$ \\
+\hline
+Flatten & - & $[2, 128, 7, 1] \to [2, 896]$ \\
+Linear & - & $[2, 896] \to [2, 4]$ \\
+\hline
+\end{tabular}
+\caption{CNNClassifier model: Classifier model trained on band power data.}
+\label{tab:cnn-layers}
+\end{table}
+
+% \section{Neurals Networks}
+
+% \section{XGBoost}
+
+% \section{SVM}
+
+% https://pubmed.ncbi.nlm.nih.gov/40039043/
+
+% \section{KNN}

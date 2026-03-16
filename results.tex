@@ -4,7 +4,7 @@
 \section{Song name prediction}
 
 We start with a task of predicting the song name of a listened song, based on the EEG signal.
-We split the MUSIN-G dataset into recordings of 14 subjects as train and remaining 6 subjects as test (for neural net split into test and val).
+We split the MUSIN-G dataset into recordings of !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 12 subjects as train and remaining 8 subjects as test (for CNN split half of test makes validation set).
 We then train a model to predict the song name from the EEG signal.
 We achieve the below results for each variant of the tested model.
 
@@ -17,7 +17,7 @@ We achieve the below results for each variant of the tested model.
     KNN     & 0.1374 \\
     SVM     & 0.1229 \\
     XGBoost & 0.1668 \\
-    NN      & --- \\
+    CNN      & 0.1740 \\
     \hline
   \end{tabular}
   \caption{Song name prediction accuracy: subject-wise split.}
@@ -41,10 +41,10 @@ We are able to reproduce these results and for \( n=20 \) achieve accuracies lik
     XGBoost & 0.85 \\
     SVM     & 0.57 \\
     KNN     & 0.64 \\
-    NN     & - \\
+    NN      & - \\
     \hline
   \end{tabular}
-  \caption{Song id prediction accuracy: temporal split.}
+  \caption{Song id prediction accuracy in the MUSIN-G dataset: temporal split.}
   \label{tab:song-id-temporal-split}
 \end{table}
 
@@ -67,9 +67,11 @@ We obtain that, similarly to the study, classifiers are able with high accuracy 
     NN      & ---    \\
     \hline
   \end{tabular}
-  \caption{Song id prediction experiment in the single subject variant.}
+  \caption{Song id prediction experiment in the single subject variant in the BCMI-training dataset.}
   \label{tab:song-id-single-subject}
 \end{table}
+
+\subsection{DTW-based trial id prediction}
 
 Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between train and test and are not forced to generalize beyond that, we propose a given experiment.
 We attempt to predict the trial id using DTW algorithm.
@@ -90,6 +92,30 @@ We fit the cost allowance hyperparameter on the validation set and then test the
 With this simple method we achive 50.83\% test accuracy.
 % Accuracy: 61/120 = 50.83%
 The experiment is meant to showcase that such direct pattern matching is possible and therefore --- it is possible for the model learn it and rely on it greatly, with little generalization capability.
+
+\section{Emotion prediction}
+
+BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities aranged on a Valence and Arousal axis.
+To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes joining multiple individual trials together.
+Therefore, it is easier to predict an emotion label than an identifier as this requires less precision, but during the training the 
+reward per training step is less valuable, gives less information.
+The balance seems to not be in the favor of this task, as we are unable to achieve results, even though in the prediction task we are.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l c}
+\hline
+Method  & Accuracy \\
+\hline
+XGBoost & 0.1089 \\
+SVM     & 0.1123 \\
+KNN     & 0.1117 \\
+CNN     & 0.1130 \\
+\hline
+\end{tabular}
+\caption{Emotion prediction accuracy}
+\label{tab:emotion-prediction}
+\end{table}
 
 \section{Music ``density'' prediction}
 
@@ -122,11 +148,13 @@ Results are shown in the below table.
     XGBoost & 0.5407 \\
     SVM     & 0.5093 \\
     KNN     & 0.5264 \\
+    NN      & - \\
     \hline
   \end{tabular}
   \caption{Music density prediction accuracy.}
   \label{tab:density-prediction}
 \end{table}
+
 
 % \section{EEG analysis}
 

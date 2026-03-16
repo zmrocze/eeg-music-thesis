@@ -28,7 +28,7 @@ as calculated by a mathematical model of musical expectation in sheet music.
 For every music track, the predicted matching EEG is compared against the real EEG signal and the one with strongest match is chosen.
 Seperate models where trained for the listened and imagined music, but it was also shown that they relate to each other where the listened is lagged version of the imagined.
 
-\subsection{Representation learning}
+\section{Representation learning}
 
 Stober and others aproach a more general problem of learning representations of EEG signal with a convolutional autoencoder\cite{stober}.
 To fight small and noisy dataset, model is trained for a given trial to reconstruct possibly different trial but of the same subject and stimulus.
@@ -57,7 +57,33 @@ The study reports mixed results.
 
 \section{Music reconstruction}
 
-Maybe-TODO
+Works of the last few years tackled the harder problem of reconstructing listened music from the EEG signal.
+
+The simplest aproach seems to be to directly train a function that maps EEG signal to music.
+The 2022 study attempts this with a 5 layer CNN model\cite{kello}.
+The network is fed 1s snippets, sampled from the full recording and assigned to training set with 75\% chance, and outputs audio in a form of a mel spectrogram. 
+The accuracy of the model is accessed by training a classifier to classify song id from the reconstructed music, achieving over 80\% accuracy.
+The model outputs were also evaluated by human listeners who were able to succesfully rate which of the two presented audio clips corresponds to a third target sound.
+
+The diffusion aproach to music generation was tested in 2025 study\cite{postolache}.
+The music gets generated via diffusion in the latent space process, where an initial noise gets iterated on with a denoising network.
+The denoised latent variable value is then fed into a decoder that converts it into an audio spectrogram.
+The denoising model is a pretrained AudioLDM2 model, trained on general music generation task.
+The researchers trained a ControlNet\cite{controlnet} adapter to condition the denoising network on the EEG signal.
+The results are quantified using metrics applicable for generation task like FAD or Pearson Coefficient.
+
+There's also attempts at combining EEG with fMRI data\cite{daly}.
+The fMRI signal allows for localization of sources of neural activity.
+The EEG processing can use such information to translate the EEG signal into equivalent one as if it was recorded with electrodes at the places of activity.
+Such processed EEG constitutes input to a biLSTM model. The model is able to reconstruct the music in waveform. A seperate model is trained for every study subject.
+The output quality is evaluated by calculating similarity between the reconstructed and all the songs listened an ranking based on similarity.
+Importantly, without the fMRI influenced processing step the results are also positive, albeit worse.
+
+Just the fMRI was used in the 2023 study\cite{denk} which relies on MuLan music encoder and MusicLM music decoder.
+Here, the chosen voxels of the fMRI signal are an input to a linear regression model that is trained to predict the embeddings of the music as given by the MuLan encoder model.
+Then, the MusicLM model generates audio from the predicted embeddings.
+
+Described attempts show that the task while hard is not impossible.
 
 % Daly\cite{daly} succesfully tackles the harder problem of reconstructing
 
