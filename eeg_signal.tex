@@ -6,39 +6,39 @@
 Electroencephalography (EEG) is a non-invasive technique used to record electrical activity of the brain\cite{Mushtaq2024}.
 It involves placing electrodes on the scalp to record electrical activity of the brain --- the electroencephalogram (also EEG).
 Each electrode records the voltage fluctuations resulting from the synchronized discharges of the working neurons in the brain.
-By subtracting the reference electrode reading from a reading of an electrode of interest we cancel out the common environmental noise and get a signal that constitues a single channel of an EEG recording.
-The amplitude of resulting signal is in the order of microvolts and very sensitive to any head movements, which need to be minimized during a recording session.
-Modern equipment captures these fluctuations with upwards of 1000 Hz high temporal resolution, allowing for precise linking between the brain's recorded activity and external stimuli.
+By subtracting the reference electrode reading from a reading of an electrode of interest we cancel out the common environmental noise and get a signal that constitutes a single channel of an EEG recording.
+The amplitude of the resulting signal is in the order of microvolts and very sensitive to any head movements, which need to be minimized during a recording session.
+Modern equipment captures these fluctuations with upwards of 1000 Hz temporal resolution, allowing for precise linking between the brain's recorded activity and external stimuli.
 
 
 \section{History}
 
-A British physician Richard Caton in the year 1875 was first to discover that the brain - specifically of rabbits and monkeys - elicits electrical activity and furthermore that the activity seems to have a relation to its function\cite{caton}. For his discovery he used a galvanometer, invented earlier in 1820 and used in laboratories and telecommunication.
-Although at the time of his discovery it was already known that nerves conduct electrical signals and that these signals are used to trigger muscle tissue to contract\cite{mattucci1}\cite{matteucci2}.
+A British physician Richard Caton in the year 1875 was the first to discover that the brain - specifically of rabbits and monkeys - elicits electrical activity and furthermore that the activity seems to have a relation to its function\cite{caton}. For his discovery he used a galvanometer, invented earlier in 1820 and used in laboratories and telecommunication.
+At the time of his discovery it was already known that nerves conduct electrical signals and that these signals are used to trigger muscle tissue to contract\cite{mattucci1}\cite{matteucci2}.
 In 1901 a Dutch medical doctor Willem Einthoven invented a more precise string galvanometer and used it to record an electrocardiogram (ECG)\cite{about_einthoven}. By placing electrodes on left and right arms and a leg he measured the electrical signal produced by a beating heart. The device functioned by placing a fine conducting string within a magnetic field created by two powerful electromagnets; the electrical signal caused this string to deflect. He was later awarded the Nobel Prize in Physiology or Medicine for his discovery.
 Later in 1912 an Ukrainian physiologist Vladimir Pravdich-Neminsky used this invention and published the first EEG recording recorded from a dog\cite{about_vladimir}.
 
-In 1924 --- which coincidentally was the year when Einthoven got awarded his Nobel Prize --- a German psychiatrist Hans Berger looking for the physiological basis for telepathy recorded the first human EEG and discovered ``alpha wave''  --- the frequency present in the signal when a person is awake\cite{about_berger}.
+In 1924 --- which coincidentally was the year when Einthoven was awarded his Nobel Prize --- a German psychiatrist Hans Berger looking for the physiological basis for telepathy recorded the first human EEG and discovered ``alpha wave''  --- the frequency present in the signal when a person is awake\cite{about_berger}.
 His discovery was first met with skepticism\cite{Mushtaq2024}, which has changed once a decade later Frederick Gibbs and others using EEG described specific repeatable pattern in the electrical activity during epilepsy\cite{about_gibson}.
 Later in the 50s the EEG signal was used to research sleep.
 In 1953 researchers discovered REM (Rapid Eye Movement) sleep phase, characterized by rapid eye movements and high--frequency low--voltage EEG activity, akin to alertness, which is often the phase when dreaming occurs\cite{rem_sleep}.
 Later a standardized way to divide sleep into sleep stages based on EEG was developed\cite{sleep_stage}.
 
-Already 1973 saw first demonstration of brain-computer interface (BCI), where EEG signal was used to control a cursor on a screen\cite{vidal}.
-This decade also saw first use of computers to analyze the EEG signal and later the analysis and collection of EEG data went purely digital.
+Already in 1973 the first demonstration of brain-computer interface (BCI) was seen, where EEG signal was used to control a cursor on a screen\cite{vidal}.
+This decade also saw the first use of computers to analyze the EEG signal and later the analysis and collection of EEG data went purely digital.
 In the 1980s laboratories started syncing EEG recording with video recordings of the subject, allowing for more detailed studies of the relationship between brain activity and behavior\cite{gloor}.
 
 Modern day 128 or 256 electrode systems allow for spatially detailed recordings of brain activity including source localization.
-EEG is now widely used in the clinical settings for diagnosis of sleep disorders\cite{sleep_medicine} and localization and clasification of seizures\cite{fisher}.
+EEG is now widely used in clinical settings for diagnosis of sleep disorders\cite{sleep_medicine} and localization and classification of seizures\cite{fisher}.
 We also see a rise in availability of consumer-grade portable EEG devices, which are used for various applications including neurofeedback, meditation and sleep improvements.
 
 \section{Characteristics}
 
-The EEG signal has few below characteristics which make it extra challenging to process and analyze.
+The EEG signal has a few characteristics below which make it extra challenging to process and analyze.
 
 \subsection{Non-stationarity}
 
-Non-stationary process is one whose statistical properties - like mean, variance or autocorrelation - change over time. 
+A non-stationary process is one whose statistical properties - like mean, variance or autocorrelation - change over time. 
 The EEG signal is non-stationary\cite{nonstationary} because the brain's activity is dynamic and influenced by various internal and external factors, such as cognitive processes, sensory inputs, emotional states, and physiological changes like changes in the skin impedance.
 Without any adaptations this renders many classical statistical methods of data analysis ineffective.
 This suggests that normalization of signal data should be done on per window basis.
@@ -47,7 +47,7 @@ This suggests that normalization of signal data should be done on per window bas
 
 As the amplitude of neural oscillations as seen in the EEG signal is so low, requiring precise measurement, even small movements and external factors can introduce significant noise and artifacts into the recordings.
 Specifically any head movements or eye blinks cause large artifacts in the signal. It can also happen that an electrode loses contact with the skin or that heart-beating appears from an electrode placed near a large blood vessel.
-Given small sample size, this often means the need to mark and remove the artifacts from the data.
+Given the small sample size, this often means the need to mark and remove the artifacts from the data.
 
 \subsection{Expensive and time-consuming data collection}
 
@@ -60,7 +60,7 @@ For these reasons EEG datasets are often small, counting hundreds to thousands o
 Given the low amplitude of the EEG signal it is very susceptible to any external noise.
 Commonly EEG data preprocessing includes filtering the 50 or 60 Hz power line noise, which appears as thick fuzz on the signal.
 In studies that combine music listening with EEG collection, the music would be a source of noise.
-To mitigate studies can use electromagnetically shielded insert earphones\cite{nozaradan}, which pump the sound directly to the ear via hollow plastic tubes, keeping the transducer (the part that creates sound) futher away from the EEG aparatus.
+To mitigate this, studies can use electromagnetically shielded insert earphones\cite{nozaradan}, which pump the sound directly to the ear via hollow plastic tubes, keeping the transducer (the part that creates sound) further away from the EEG apparatus.
 
 
 \subsection{Signal-to-noise ratio}
@@ -69,7 +69,7 @@ Given that EEG measures a combined electrical activity of millions of neurons, o
 it is given that the observed reaction to experimental stimulus as witnessed from the data is going to be mixed with a lot of other brain activity, which is not related to the stimulus.
 Furthermore, the observed reaction is going to be different across subjects and even across different recording sessions of the same subject.
 For this reason the signal-to-noise ratio (SNR) of the EEG data is often very low, making it difficult to extract meaningful information from the data and to link it to the experimental stimulus.
-Common way of analyzing EEG data involves averaging EEG response at fixed interval after presenting stimulus.
+A common way of analyzing EEG data involves averaging EEG response at fixed interval after presenting stimulus.
 
 \section{Preprocessing}
 
@@ -140,7 +140,7 @@ The classification can be done with a neural network trained on expert-labeled d
 
 \subsection{Normalization}
 
-There is few reasonable ways to normalize the signal, like: z-score normalization, min-max normalization or robust normalization.
+There are a few reasonable ways to normalize the signal, like: z-score normalization, min-max normalization or robust normalization.
 Because of the non-stationarity of the signal, it is common to apply normalization on a per window basis, where window is a short segment of the full recording.
 What remains to be chosen is whether the normalization should apply per channel independently or jointly across all channels.
 Just removing the mean across all channels is called rereferencing.

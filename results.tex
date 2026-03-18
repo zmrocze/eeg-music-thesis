@@ -4,7 +4,7 @@
 \section{Song name prediction}
 
 We start with a task of predicting the song name of a listened song, based on the EEG signal.
-We split the MUSIN-G dataset into recordings of !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 12 subjects as train and remaining 8 subjects as test (for CNN split half of test makes validation set).
+We split the MUSIN-G dataset into recordings of 12 subjects as train and remaining 8 subjects as test (for CNN split half of test makes validation set).
 We then train a model to predict the song name from the EEG signal.
 We achieve the below results for each variant of the tested model.
 
@@ -51,7 +51,7 @@ We are able to reproduce these results and for \( n=20 \) achieve accuracies lik
 To us this poor generalization suggests that the model in this second variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
 We test the hypothesis with two experiments. 
 
-First, we run similar experiment on a the BCMI-training dataset. The dataset contains from 144 up-to 432 trials recorded for a single subject.
+First, we run similar experiment on a the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
 The recordings share between each other the ``emotionality'' of the listened music but no listened song repeats across the dataset as the songs are computer generated per each trial.
 We obtain that, similarly to the study, classifiers are able with high accuracy to predict the trial id from the EEG signal. 
 
@@ -73,7 +73,7 @@ We obtain that, similarly to the study, classifiers are able with high accuracy 
 
 \subsection{DTW-based trial id prediction}
 
-Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between train and test and are not forced to generalize beyond that, we propose a given experiment.
+Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between train and test and are not forced to generalize beyond that, we propose the following experiment.
 We attempt to predict the trial id using DTW algorithm.
 
 The DTW in the most basic form is a method of measuring a distance between two time series, by finding an optimal alignment between them.
@@ -89,17 +89,17 @@ We employ a generalized version called approximate-subsequence-DTW, which can be
 For a single subject of BCMI-training dataset, we predict the trial id of a test trial by finding across all training trials,
 the one that scores the highest when calculating the approximate-subsequence-DTW distance between the test trial and the training trial.
 We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
-With this simple method we achive 50.83\% test accuracy.
+With this simple method we achieve 50.83\% test accuracy.
 % Accuracy: 61/120 = 50.83%
 The experiment is meant to showcase that such direct pattern matching is possible and therefore --- it is possible for the model learn it and rely on it greatly, with little generalization capability.
 
 \section{Emotion prediction}
 
-BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities aranged on a Valence and Arousal axis.
-To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes joining multiple individual trials together.
-Therefore, it is easier to predict an emotion label than an identifier as this requires less precision, but during the training the 
-reward per training step is less valuable, gives less information.
-The balance seems to not be in the favor of this task, as we are unable to achieve results, even though in the prediction task we are.
+The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on a Valence and Arousal axis.
+To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes that join multiple individual trials together.
+Therefore, it is easier to predict an emotion label than an identifier as this requires less precision, but during training the 
+reward per training step is less valuable and gives less information.
+The balance seems to not be in favor of this task, as we are unable to achieve results, even though in the prediction task we do.
 
 \begin{table}[h]
 \centering
@@ -148,7 +148,7 @@ Results are shown in the below table.
     XGBoost & 0.5407 \\
     SVM     & 0.5093 \\
     KNN     & 0.5264 \\
-    NN      & - \\
+    CNN     & 0.5206 \\
     \hline
   \end{tabular}
   \caption{Music density prediction accuracy.}

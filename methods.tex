@@ -8,6 +8,7 @@ Then we apply a bandpass filter between 0.5Hz and 50Hz.
 We rereference the data.
 Then we apply the ICA transform, removing the artifact components and reducing the dimensionality from 128 channels to 12.
 We calculate band power for every ICA component and the standard EEG frequency bands and concatenate the results. 
+Without this step we observe the models to struggle to train.
 Before concatenation we apply z-score normalization per frequency band.
 
 \begin{figure}[h]
@@ -42,7 +43,7 @@ use stratified sampling method, where first one of \( k \) segments is picked (o
 
 \section{Note onset feature extraction}
 
-For the task that detecting note onsets we use essentia\cite{essentia} library with their HFC onset detection method to transform the raw wave audio signal into a list of note onset start time.
+For the task of detecting note onsets we use the essentia\cite{essentia} library with their HFC onset detection method to transform the raw wave audio signal into a list of note onset start times.
 
 \section{Models}
 
@@ -51,45 +52,129 @@ We use four different model types: KNN, SVM, XGBoost and a Convolutional Neural 
 For discussion of KNN, SVM and XGBoost models we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
 
 We define 3 related CNN networks, for the task of classification in two variants: to input band power processed data or raw EEG data, and for the task of reconstruction of music.
-The classification networks are convolutional neural networks with 3 convolutional layer and a fully-connected layer.
-They differ in the input dimensionality they are meant to work with: one inputs EEG images after preprocessing, including band power calculation which leaves the 1s snippets to be of shape \( 60\cross 10\).
-The other inputs raw EEG data, which has shape \( 129\cross 256\) and is used for the ablation study in the appendix. The models have 136164 and 249380 parameters respectively.
+The classification networks are convolutional neural networks with 3 convolutional layers and a fully-connected layer.
+They differ in the input dimensionality they are meant to work with: one inputs EEG images after preprocessing, including band power calculation which leaves the 1s snippets to be of shape \( 60\times 10\).
+The other inputs raw EEG data, which has shape \( 129\times 256\) and is used for the ablation study in the appendix. The models have 136164 and 249380 parameters respectively.
 
 % table with layers of cnn 
 \begin{table}[h]
 \centering
+\footnotesize
 \begin{tabular}{l|ll}
 \hline
 \textbf{Layer Type} & \textbf{Filter Size} & \textbf{Input → Output} \\
 \hline
-Conv2D (freq) & $1 \times 5$ & $[2, 1, 60, 10] \to [2, 16, 60, 10]$ \\
-BatchNorm2D & - & $[2, 16, 60, 10] \to [2, 16, 60, 10]$ \\
-Conv2D (time) & $5 \times 1$ & $[2, 16, 60, 10] \to [2, 32, 60, 10]$ \\
-ELU & - & $[2, 32, 60, 10] \to [2, 32, 60, 10]$ \\
-MaxPool2D & $2 \times 2$ & $[2, 32, 60, 10] \to [2, 32, 30, 5]$ \\
-Dropout & - & $[2, 32, 30, 5] \to [2, 32, 30, 5]$ \\
+Conv2D (freq) & $1 \times 5$ & $[B, 1, 60, 10] \to [B, 16, 60, 10]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $5 \times 1$ & $[B, 16, 60, 10] \to [B, 32, 60, 10]$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 32, 60, 10] \to [B, 32, 30, 5]$ \\
+Dropout & - & $''$ \\
 \hline
-Conv2D (freq) & $1 \times 3$ & $[2, 32, 30, 5] \to [2, 64, 30, 5]$ \\
-BatchNorm2D & - & $[2, 64, 30, 5] \to [2, 64, 30, 5]$ \\
-Conv2D (time) & $3 \times 1$ & $[2, 64, 30, 5] \to [2, 128, 30, 5]$ \\
-ELU & - & $[2, 128, 30, 5] \to [2, 128, 30, 5]$ \\
-MaxPool2D & $2 \times 2$ & $[2, 128, 30, 5] \to [2, 128, 15, 2]$ \\
-Dropout & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
+Conv2D (freq) & $1 \times 3$ & $[B, 32, 30, 5] \to [B, 64, 30, 5]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $3 \times 1$ & $[B, 64, 30, 5] \to [B, 128, 30, 5]$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 128, 30, 5] \to [B, 128, 15, 2]$ \\
+Dropout & - & $''$ \\
 \hline
-Conv2D (freq) & $1 \times 3$ & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
-BatchNorm2D & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
-Conv2D (time) & $3 \times 1$ & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
-ELU & - & $[2, 128, 15, 2] \to [2, 128, 15, 2]$ \\
-MaxPool2D & $2 \times 2$ & $[2, 128, 15, 2] \to [2, 128, 7, 1]$ \\
-Dropout & - & $[2, 128, 7, 1] \to [2, 128, 7, 1]$ \\
+Conv2D (freq) & $1 \times 3$ & $[B, 128, 15, 2] \to [B, 128, 15, 2]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $3 \times 1$ & $''$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 128, 15, 2] \to [B, 128, 7, 1]$ \\
+Dropout & - & $''$ \\
 \hline
-Flatten & - & $[2, 128, 7, 1] \to [2, 896]$ \\
-Linear & - & $[2, 896] \to [2, 4]$ \\
+Flatten & - & $[B, 128, 7, 1] \to [B, 896]$ \\
+Linear & - & $[B, 896] \to [B, 4]$ \\
 \hline
 \end{tabular}
 \caption{CNNClassifier model: Classifier model trained on band power data.}
 \label{tab:cnn-layers}
 \end{table}
+
+
+The reconstruction network is U-Net style with a 3 layer contracting encoder, a middle bottleneck fully-connected layer, and a 3 layer expanding decoder.
+The encoder is the same architecture as the classifier model, and the decoder is a matchingly a 3 layer upsampling convolutional network.
+There are skip connections between matching layers of the encoder and decoder.
+As the input is of different dimensionality than the output and consecutively outputs of the encoder and decoder layers are, the skip connections also apply interpolation to match the dimensions.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{l|ll}
+\hline
+\textbf{Layer Type} & \textbf{Filter Size} & \textbf{Input → Output} \\
+\hline
+\multicolumn{3}{c}{\textit{Encoder}} \\
+\hline
+Conv2D (freq) & $1 \times 5$ & $[B, 1, 60, 10] \to [B, 16, 60, 10]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $5 \times 1$ & $[B, 16, 60, 10] \to [B, 32, 60, 10]$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 32, 60, 10] \to [B, 32, 30, 5]$ \\
+Dropout & - & $''$ \\
+\hline
+Conv2D (freq) & $1 \times 3$ & $[B, 32, 30, 5] \to [B, 64, 30, 5]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $3 \times 1$ & $[B, 64, 30, 5] \to [B, 128, 30, 5]$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 128, 30, 5] \to [B, 128, 15, 2]$ \\
+Dropout & - & $''$ \\
+\hline
+Conv2D (freq) & $1 \times 3$ & $[B, 128, 15, 2] \to [B, 128, 15, 2]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (time) & $3 \times 1$ & $''$ \\
+ELU & - & $''$ \\
+MaxPool2D & $2 \times 2$ & $[B, 128, 15, 2] \to [B, 128, 7, 1]$ \\
+Dropout & - & $''$ \\
+\hline
+\multicolumn{3}{c}{\textit{Bottleneck}} \\
+\hline
+Flatten & - & $[B, 128, 7, 1] \to [B, 896]$ \\
+Linear + ELU & - & $[B, 896] \to [B, 128]$ \\
+Unsqueeze & - & $[B, 128] \to [B, 128, 1, 1]$ \\
+ConvTranspose2D & $7 \times 1$ & $[B, 128, 1, 1] \to [B, 128, 7, 1]$ \\
+\hline
+\multicolumn{3}{c}{\textit{Decoder}} \\
+\hline
+Concat (skip enc3) & - & $[B, 128, 7, 1] + [B, 128, 7, 1] \to [B, 256, 7, 1]$ \\
+Upsample & $2 \times 4$ & $[B, 256, 7, 1] \to [B, 256, 14, 4]$ \\
+Conv2D (time) & $3 \times 1$ & $[B, 256, 14, 4] \to [B, 128, 14, 4]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (freq) & $1 \times 3$ & $''$ \\
+ELU & - & $''$ \\
+Dropout & - & $''$ \\
+AdaptiveAvgPool2D & - & $[B, 128, 14, 4] \to [B, 128, 15, 4]$ \\
+\hline
+Concat (skip enc2) & - & $[B, 128, 15, 4] + [B, 128, 15, 4] \to [B, 256, 15, 4]$ \\
+Upsample & $2 \times 4$ & $[B, 256, 15, 4] \to [B, 256, 30, 16]$ \\
+Conv2D (time) & $3 \times 1$ & $[B, 256, 30, 16] \to [B, 64, 30, 16]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (freq) & $1 \times 3$ & $[B, 64, 30, 16] \to [B, 32, 30, 16]$ \\
+ELU & - & $''$ \\
+Dropout & - & $''$ \\
+\hline
+Concat (skip enc1) & - & $[B, 32, 30, 16] + [B, 32, 30, 16] \to [B, 64, 30, 16]$ \\
+Upsample & $2 \times 4$ & $[B, 64, 30, 16] \to [B, 64, 60, 64]$ \\
+Conv2D (time) & $5 \times 1$ & $[B, 64, 60, 64] \to [B, 16, 60, 64]$ \\
+BatchNorm2D & - & $''$ \\
+Conv2D (freq) & $1 \times 5$ & $[B, 16, 60, 64] \to [B, 1, 60, 64]$ \\
+ELU & - & $''$ \\
+Dropout & - & $''$ \\
+\hline
+\multicolumn{3}{c}{\textit{Final Adaptation}} \\
+\hline
+Conv2D + ELU & $3 \times 3$ & $[B, 1, 60, 64] \to [B, 1, 60, 64]$ \\
+AdaptiveAvgPool2D & - & $[B, 1, 60, 64] \to [B, 1, 64, 64]$ \\
+Concat (skip input) & - & $[B, 1, 64, 64] + [B, 1, 64, 64] \to [B, 2, 64, 64]$ \\
+Conv2D & $1 \times 1$ & $[B, 2, 64, 64] \to [B, 1, 64, 64]$ \\
+\hline
+\end{tabular}
+\caption{CNNReconstruction model: U-Net style network for music spectrogram reconstruction.}
+\label{tab:cnn-reconstruction-layers}
+\end{table}
+
 
 % \section{Neurals Networks}
 
