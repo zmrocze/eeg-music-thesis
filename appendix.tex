@@ -5,16 +5,16 @@
 \section{Stratified Sampling}
 
 When sampling snippets of specified length from the dataset, we use a stratified sampling approach.
-We do this to avoid draws when many times a snippet gets sampled from a single region of the trial and dataset.
-Such imbalance could lead to overfitting to a portion of a dataset and generally to treating of various regions disproportionately.
-We study the effect of this approach and find out it may matter less than we anticipated.
+We do this to avoid draws where a snippet is repeatedly sampled from a single region of a trial.
+Such an imbalance could lead to overfitting to a portion of the dataset and, generally, to treating various regions disproportionately.
+We study the effect of this approach and find that it may matter less than we anticipated.
 
-We remind that the stratified approach means sampling in \( n_{\text{strata}} \) consecutive turns from \( n_{\text{strata}} \) disjoint regions of the sampled dataset.
+Recall that the stratified approach means sampling in \( n_{\text{strata}} \) consecutive turns from \( n_{\text{strata}} \) disjoint regions of the sampled dataset.
 The parameter \( n_{\text{strata}} \) controls the granularity or the number of disjoint regions summing up to the full trial length.
-We do an experiment where we always sample from each trial a 100 times, but vary the number of strata \( n_{\text{strata}} \).
+We perform an experiment where we always sample 100 times from each trial, but vary the number of strata \( n_{\text{strata}} \).
 We test on the task of song identification in the MUSIN-G dataset.
-The results are seen in the below graph and at most seem to suggest detrimental value of such sampling for use with the XGBoost model. 
-The effect seems small enough to follow the intuition behind the stratified approach and use it either way.
+The results are shown in the graph below and, at most, seem to suggest a detrimental effect of such sampling when used with the XGBoost model. 
+The effect seems small enough that we can follow the intuition behind the stratified approach and use it regardless.
 
 \begin{figure}[H]
   \centering
@@ -26,11 +26,11 @@ The effect seems small enough to follow the intuition behind the stratified appr
 
 \section{ICA}
 
-In preprocessing of EEG data we use ICA as a dimension reduction transform on EEG signal.
-ICA finds a linear transform of EEG signal into so called independent components which are ordered by importance.
-Similarly to the use of PCA, we can drop bottom components and reduce number of channels of the EEG data.
-We compare such use of ICA in preprocessing to instead picking a set of channels and dropping the rest.
-The set of channels to be picked in this "No ICA" case is predefined and chosen based on proximity to auditory processing regions of the brain or a known relation to music processing.
+In the preprocessing of the EEG data, we use ICA as a dimensionality reduction transform on the EEG signal.
+ICA finds a linear transform of the EEG signal into so-called independent components, which are ordered by importance.
+Similar to the use of PCA, we can drop the bottom components and reduce the number of channels in the EEG data.
+We compare this use of ICA in preprocessing to picking a set of channels and dropping the rest.
+The set of channels to be picked in this ``No ICA'' case is predefined and chosen based on proximity to auditory processing regions of the brain or a known relation to music processing.
 
 \begin{figure}[H]
   \centering

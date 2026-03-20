@@ -5,37 +5,37 @@
 
 Classification of listened music based on EEG signal has been tackled in various forms by several researchers.
 
-Already in 2011 a linear logistic-regression classifier was successfully used to classify ERP (event-related potential) segments of EEG signal into listened songs\cite{rebecca}.
-The focus on ERPs means that every little over 3 second long trial is its own snippet for classification therefore EEG snippets are aligned in time --- all start when music started playing in the experiment scenario.
+As early as 2011, a linear logistic-regression classifier was successfully used to classify ERP (event-related potential) segments of EEG signals into listened-to songs\cite{rebecca}.
+The focus on ERPs means that every trial, which is slightly over 3 seconds long, acts as its own snippet for classification. Therefore, the EEG snippets are aligned in time --- all starting when the music began playing in the experimental scenario.
 
-In a similar paradigm Sterni and others\cite{sterni} classify listened music using first a dimension reduction technique to learn signal components and then a CNN with single convolution layer.
-They also succeed in classifying trials based on meter of a song (3/4 versus 4/4).
+In a similar paradigm, Sterni et al.\cite{sterni} classify listened-to music using first a dimensionality reduction technique to learn signal components, and then a CNN with a single convolutional layer.
+They also succeed in classifying trials based on the meter of a song (3/4 versus 4/4).
 
-Two studies related by the collected dataset later published as MUSIN-G tackle the problem of classifying listened music based on EEG signal in a paradigm similar to ours, 
-where a snippet for classification is randomly sampled from the whole recording.
-Study by Lawhatre uses multilevel wavelet method which finds frequency components at various time scales to extract lower level features and then tests various models like knn, decisions trees, SVM and CNN's\cite{lawhatre}.
-The study establishes usefulness of the dataset.
+Two studies, linked by the collected dataset later published as MUSIN-G, tackle the problem of classifying listened-to music based on the EEG signal in a paradigm similar to ours, 
+where a snippet for classification is randomly sampled from the entire recording.
+A study by Lawhatre uses a multilevel wavelet method, which finds frequency components at various time scales, to extract lower-level features and then tests various models such as KNN, decision trees, SVM, and CNNs\cite{lawhatre}.
+The study establishes the usefulness of the dataset.
 
-The second study applies 3 layer CNN to either time-domain EEG signal or the frequency-domain spectrogram of the EEG\cite{guess}.
-It doesn't achieve better than random classifier in the time-domain case.
-But in the frequency-domain case, the best CNN model with ~1.6M parameters achieved over 80\% accuracy.
-In the cross participant setting though the model failed to generalize.
+The second study applies a 3-layer CNN to either the time-domain EEG signal or the frequency-domain spectrogram of the EEG\cite{guess}.
+It does not perform better than a random classifier in the time-domain case.
+However, in the frequency-domain case, the best CNN model with ~1.6M parameters achieved over 80\% accuracy.
+In the cross-participant setting, however, the model failed to generalize.
 
-The existence of signal related to music in the EEG signal poses the question: what about imagining music?
-In a 2021 paper researchers attempt classifying EEG by first decoding EEG from music.\cite{silence}
-The musical input is transformed to a binary vector that encodes note onsets together with an auxiliary vector that encodes note expected surprise
+The existence of a signal related to music in the EEG signal poses a question: what about imagining music?
+In a 2021 paper, researchers attempted to classify EEG by first decoding EEG from music\cite{silence}.
+The musical input is transformed into a binary vector that encodes note onsets, together with an auxiliary vector that encodes expected note surprise,
 as calculated by a mathematical model of musical expectation in sheet music.
-For every music track, the predicted matching EEG is compared against the real EEG signal and the one with strongest match is chosen.
-Separate models were trained for the listened and imagined music, but it was also shown that they relate to each other where the listened is a lagged version of the imagined.
+For every music track, the predicted matching EEG is compared against the real EEG signal, and the one with the strongest match is chosen.
+Separate models were trained for the listened and imagined music, but it was also shown that they relate to each other, with the listened version being a lagged version of the imagined one.
 
 \section{Representation learning}
 
-Stober and others approach a more general problem of learning representations of EEG signal with a convolutional autoencoder\cite{stober}.
-To fight small and noisy dataset, model is trained for a given trial to reconstruct possibly different trial but of the same subject and stimulus.
-They are able to train CNN and SVC classifiers to predict the song id from the hidden representation of the autoencoder.
+Stober et al. approach a more general problem of learning representations of the EEG signal with a convolutional autoencoder\cite{stober}.
+To combat the small and noisy dataset, the model is trained on a given trial to reconstruct a possibly different trial, but of the same subject and stimulus.
+They are able to train CNN and SVC classifiers to predict the song ID from the hidden representation of the autoencoder.
 
-This suggests the question if a common representation space could be found for both music and EEG signal or the two can be related to each other.
-Researchers try answering the second question by comparing the distance matrices within the sets of extracted audio features and extracted EEG features\cite{foster}.
+This raises the question of whether a common representation space could be found for both music and the EEG signal, or if the two can be related to each other.
+Researchers attempted to answer the second question by comparing the distance matrices within the sets of extracted audio features and extracted EEG features\cite{foster}.
 The study reports mixed results.
 
 % \cite{rebecca} - 2011, quadratically regularized linear logistic-regression classifier, 3s event-aligned EEG segments
@@ -59,27 +59,27 @@ The study reports mixed results.
 
 Works of the last few years tackled the harder problem of reconstructing listened music from the EEG signal.
 
-The simplest approach seems to be to directly train a function that maps EEG signal to music.
-The 2022 study attempts this with a 5 layer CNN model\cite{kello}.
-The network is fed 1s snippets, sampled from the full recording and assigned to the training set with 75\% chance, and outputs audio in the form of a mel spectrogram. 
-The accuracy of the model is assessed by training a classifier to classify song id from the reconstructed music, achieving over 80\% accuracy.
-The model outputs were also evaluated by human listeners who were able to successfully rate which of the two presented audio clips corresponds to a third target sound.
+The simplest approach seems to be directly training a function that maps the EEG signal to music.
+A 2022 study attempts this with a 5-layer CNN model\cite{kello}.
+The network is fed 1s snippets, randomly sampled from the full recording and assigned to the training set with a 75\% probability, and outputs audio in the form of a mel spectrogram. 
+The accuracy of the model is assessed by training a classifier to predict the song ID from the reconstructed music, achieving over 80\% accuracy.
+The model outputs were also evaluated by human listeners, who were able to successfully determine which of two presented audio clips corresponded to a third target sound.
 
 The diffusion approach to music generation was tested in a 2025 study\cite{postolache}.
-The music gets generated via diffusion in the latent space process, where an initial noise gets iterated on with a denoising network.
-The denoised latent variable value is then fed into a decoder that converts it into an audio spectrogram.
-The denoising model is a pretrained AudioLDM2 model, trained on general music generation task.
+The music is generated via a diffusion process in the latent space, where initial noise is iteratively refined with a denoising network.
+The denoised latent variable is then fed into a decoder that converts it into an audio spectrogram.
+The denoising model is a pretrained AudioLDM2 model, trained on a general music generation task.
 The researchers trained a ControlNet\cite{controlnet} adapter to condition the denoising network on the EEG signal.
-The results are quantified using metrics applicable for generation task like FAD or Pearson Coefficient.
+The results are quantified using metrics applicable to generation tasks, such as FAD or the Pearson correlation coefficient.
 
-There's also attempts at combining EEG with fMRI data\cite{daly}.
-The fMRI signal allows for localization of sources of neural activity.
-The EEG processing can use such information to translate the EEG signal into equivalent one as if it was recorded with electrodes at the places of activity.
-Such processed EEG constitutes the input to a biLSTM model. The model is able to reconstruct the music in waveform. A separate model is trained for every study subject.
-The output quality is evaluated by calculating similarity between the reconstructed and all the songs listened and ranking based on similarity.
-Importantly, without the fMRI influenced processing step the results are also positive, albeit worse.
+There are also attempts at combining EEG with fMRI data\cite{daly}.
+The fMRI signal allows for the localization of sources of neural activity.
+EEG processing can use this information to translate the EEG signal into an equivalent one, as if it were recorded with electrodes at the sites of activity.
+This processed EEG constitutes the input to a biLSTM model. The model is able to reconstruct the music in waveform. A separate model is trained for every study subject.
+The output quality is evaluated by calculating the similarity between the reconstructed audio and all the listened-to songs, and then ranking them based on similarity.
+Importantly, even without the fMRI-influenced processing step, the results are positive, albeit worse.
 
-Just the fMRI was used in the 2023 study\cite{denk} which relies on MuLan music encoder and MusicLM music decoder.
+Only fMRI was used in a 2023 study\cite{denk}, which relies on the MuLan music encoder and the MusicLM music decoder.
 Here, the chosen voxels of the fMRI signal are an input to a linear regression model that is trained to predict the embeddings of the music as given by the MuLan encoder model.
 Then, the MusicLM model generates audio from the predicted embeddings.
 
