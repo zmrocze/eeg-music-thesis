@@ -98,6 +98,7 @@ The reconstruction network uses a U-Net style architecture with a 3-layer contra
 The encoder has the same architecture as the classifier model, and the decoder is correspondingly a 3-layer upsampling convolutional network.
 There are skip connections between matching layers of the encoder and decoder.
 Because the input has a different dimensionality than the output and consequently, the outputs of the encoder and decoder layers differ in shape, the skip connections also apply interpolation to match the dimensions.
+The model has 143,280 parameters.
 
 \begin{table}[h]
 \centering

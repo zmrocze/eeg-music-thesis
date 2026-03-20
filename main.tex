@@ -12,8 +12,22 @@
 % polecenia \fmlinebreak.
 \polishtitle    {Predykcja cech słuchanej muzyki na podstawie sygnału EEG}
 \englishtitle   {Prediction of listened music features from EEG signal}
-\polishabstract {\ldots}
-\englishabstract{We consider the possibility of decoding music features from the EEG signal. We utilize datasets of joint music and EEG recordings. First, we ask whether the song name can be predicted [and get a mixed answer]. We explain the result with a DTW experiment. We further ask whether music features can be predicted. For that, we classify EEG snippets into "slow" and "fast" based on the tempo of the related music snippet.}
+\polishabstract {Rozważamy możliwość dekodowania pewnych cech słuchanej muzyki na podstawie sygnału EEG.
+Korzystamy z danych EEG zebranych podczas słuchania muzyki przez uczestników.
+Najpierw pytamy, czy można przewidzieć nazwę słuchanej piosenki. Odpowiadamy pozytywnie, lecz wynik słabo generalizuje się pomiędzy uczestnikami.
+Wyjaśniamy wynik eksperymentu przy pomocy eksperymentu z użyciem algorytmu DTW.
+Dalej pytamy, czy cechy muzyki można przewidzieć.
+W tym celu klasyfikujemy fragmenty EEG jako "gęste" lub "rzadkie", na podstawie liczby nut rozpoczętych w odpowiadającym fragmencie muzyki.
+Finalnie, rekonstruujemy słuchane fragmenty muzyki na podstawie sygnału EEG.
+}
+\englishabstract{We consider the possibility of decoding music features from the EEG signal. 
+We utilize datasets of joint music and EEG recordings. 
+First, we ask whether the song name can be predicted and get a positive result, yet it is weakly generalizable across subjects. 
+We explain the result with a DTW experiment. 
+We further ask whether music features can be predicted. 
+For that, we classify EEG snippets into "dense" and "sparse" based on the number of note onsets in the related music snippet.
+Lastly, we reconstruct the listened-to music from the EEG signal.
+}
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Karol Ochman-Milarski}
 % w przypadku kilku promotorow, lub koniecznosci podania ich afiliacji, linie
