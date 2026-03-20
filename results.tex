@@ -3,8 +3,8 @@
 
 \section{Song name prediction}
 
-We start with a task of predicting the song name of a listened song, based on the EEG signal.
-We split the MUSIN-G dataset into recordings of 12 subjects as train and remaining 8 subjects as test (for CNN split half of test makes validation set).
+We start with the task of predicting the song name of a listened-to song based on the EEG signal.
+We split the MUSIN-G dataset into recordings of 12 subjects for training and the remaining 8 subjects for testing (for CNN, half of the test set serves as the validation set).
 We then train a model to predict the song name from the EEG signal.
 We achieve the below results for each variant of the tested model.
 
@@ -25,12 +25,12 @@ We achieve the below results for each variant of the tested model.
 \end{table}
 
 
-Our results are comparable to the study by Pandey and others\cite{pandey} in which researchers achieved 12.5\% mean subject accuracy (random classifier gives \(  \frac{1}{12} = 0.08(3) \))
+Our results are comparable to the study by Pandey et al.\cite{pandey}, in which researchers achieved 12.5\% mean subject accuracy (a random classifier gives \(  \frac{1}{12} = 0.08(3) \)).
 
-In the above study researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
-by taking initial \( n \) seconds of each recording as training data and remaining seconds as testing data. The study compares results that can be achieved for the few chosen \( n \) parameters (\(3, 5, 10, 20\)) achieving higher accuracy for bigger training partitions.
+In the above study, researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
+by taking the initial \( n \) seconds of each recording as training data and the remaining seconds as testing data. The study compares results that can be achieved for a few chosen \( n \) parameters (\(3, 5, 10, 20\)), achieving higher accuracy for larger training partitions.
 The results in this variant of the experiment are much higher (\( 84\% \)) than in the previous variant.
-We are able to reproduce these results and for \( n=20 \) achieve accuracies like in the table:
+We are able to reproduce these results, and for \( n=20 \) we achieve accuracies as shown in the table:
 
 \begin{table}[h]
   \centering
@@ -48,12 +48,12 @@ We are able to reproduce these results and for \( n=20 \) achieve accuracies lik
   \label{tab:song-id-temporal-split}
 \end{table}
 
-To us this poor generalization suggests that the model in this second variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
+This poor generalization suggests that the model in this second variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
 We test the hypothesis with two experiments. 
 
-First, we run similar experiment on a the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
-The recordings share between each other the ``emotionality'' of the listened music but no listened song repeats across the dataset as the songs are computer generated per each trial.
-We obtain that, similarly to the study, classifiers are able with high accuracy to predict the trial id from the EEG signal. 
+First, we run a similar experiment on the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
+The recordings share the ``emotionality'' of the listened-to music, but no listened-to song repeats across the dataset as the songs are computer-generated for each trial.
+We find that, similarly to the study, classifiers are able to predict the trial ID from the EEG signal with high accuracy. 
 
 \begin{table}[h]
   \centering
@@ -73,12 +73,12 @@ We obtain that, similarly to the study, classifiers are able with high accuracy 
 
 \subsection{DTW-based trial id prediction}
 
-Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between train and test and are not forced to generalize beyond that, we propose the following experiment.
-We attempt to predict the trial id using DTW algorithm.
+Secondly, guided by the intuition that the classifiers notice directly repeatable patterns in the EEG signal between training and test sets and are not forced to generalize beyond that, we propose the following experiment.
+We attempt to predict the trial ID using the DTW algorithm.
 
-The DTW in the most basic form is a method of measuring a distance between two time series, by finding an optimal alignment between them.
-Such alignment is a match between points of one time series and points of the other time series, that minimizes the sum of distances between matched points, 
-starts and ends at the two matched ends of the two time series and is monotonic in between.
+DTW in its most basic form is a method of measuring the distance between two time series by finding an optimal alignment between them.
+Such an alignment is a match between points of one time series and points of the other time series that minimizes the sum of distances between matched points, 
+starts and ends at the two matched ends of the two time series, and is monotonic in between.
 We employ a generalized version called approximate-subsequence-DTW, which can be defined by:
 \begin{enumerate}
   \item Given two sequences $A$ and $B$, it finds a match between an infix of $A$ and $B$.
@@ -86,20 +86,20 @@ We employ a generalized version called approximate-subsequence-DTW, which can be
   \item The matched infix is of maximal length.
 \end{enumerate}
 
-For a single subject of BCMI-training dataset, we predict the trial id of a test trial by finding across all training trials,
+For a single subject of the BCMI-training dataset, we predict the trial ID of a test trial by finding, across all training trials,
 the one that scores the highest when calculating the approximate-subsequence-DTW distance between the test trial and the training trial.
 We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
 With this simple method we achieve 50.83\% test accuracy.
 % Accuracy: 61/120 = 50.83%
-The experiment is meant to showcase that such direct pattern matching is possible and therefore --- it is possible for the model learn it and rely on it greatly, with little generalization capability.
+The experiment is meant to showcase that such direct pattern matching is possible and therefore---it is possible for the model to learn it and rely on it greatly, with little generalization capability.
 
 \section{Emotion prediction}
 
-The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on a Valence and Arousal axis.
+The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on Valence and Arousal axes.
 To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes that join multiple individual trials together.
-Therefore, it is easier to predict an emotion label than an identifier as this requires less precision, but during training the 
+Therefore, it is easier to predict an emotion label than an identifier, as this requires less precision, but during training, the 
 reward per training step is less valuable and gives less information.
-The balance seems to not be in favor of this task, as we are unable to achieve results, even though in the prediction task we do.
+The balance does not seem to be in favor of this task, as we are unable to achieve good results, even though we do in the prediction task.
 
 \begin{table}[h]
 \centering
@@ -119,25 +119,25 @@ CNN     & 0.1130 \\
 
 \section{Music ``density'' prediction}
 
-Looking for musical features visible through the EEG recording we define a ``density'' of a music snippet and by extension the paired EEG snippet.
+Looking for musical features visible through the EEG recording, we define a ``density'' of a music snippet and, by extension, the paired EEG snippet.
 First, we mark note onsets in the music recordings. 
-We do that by looking at the music's mel spectrograms and marking the time points in which the spectrogram's energy increases significantly, weighting the changes in the high frequencies more (High-Frequency-Content method).
+We do that by looking at the music's mel spectrograms and marking the time points at which the spectrogram's energy increases significantly, weighting the changes in the high frequencies more (High-Frequency-Content method).
 The HFC method was visually compared to other methods and chosen as seemingly best.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{imgs/mel_onset_hvha1.wav.png}
   \includegraphics[width=\linewidth]{imgs/mel_onset_hvha2.wav.png}
-  \caption{Spectrograms of two 4s music snippets with marked note onsets as detected by the algorithm.}
+  \caption{Spectrograms of two 4s music snippets with marked note onsets.}
   \label{fig:mel-onsets}
 \end{figure}
 
-Now, for a chosen length of a time window, we get a certain distribution on number of note onsets within windows of this length.
-Calculating the median number, we can split the snippets into two classes: the ``sparse'' class with a number of onsets below the median and the ``dense'' class with a number of onsets above the median.
+Now, for a chosen length of a time window, we get a certain distribution of the number of note onsets within windows of this length.
+Calculating the median number, we can split the snippets into two classes: the ``sparse'' class with a number of onsets below the median, and the ``dense'' class with a number of onsets above the median.
 We calculate the median only on the training set and define a classification task of predicting the class of a snippet based on the paired EEG snippet.
-We hope a success in this task may be a stronger indicator that some musical features are present and can be decoded from the EEG signal.
+We hope that success in this task may be a stronger indicator that some musical features are present and can be decoded from the EEG signal.
 
-Results are shown in the below table.
+Results are shown in the table below.
 
 \begin{table}[h]
   \centering
@@ -154,6 +154,62 @@ Results are shown in the below table.
   \caption{Music density prediction accuracy.}
   \label{tab:density-prediction}
 \end{table}
+
+\section{Music reconstruction}
+
+We attempt to reconstruct listened-to music from the EEG signal for the MUSIN-G dataset.
+We treat this task as an extension of the song ID prediction task: if a model can learn to predict a song, can it learn to predict the specific fragment of a song and generate its mel spectrogram?
+Our architecture of the $CNN_{reconstruction}$ model used for this task reflects this idea. 
+It can be seen as an encoder and decoder model, with skip connections, where the encoder is similar to the $CNN_{classification}$ model.
+
+Reflecting the results in the song identification tasks, we observe that the model is able to reconstruct music to some extent in the variant where 
+single-subject recordings are split into training and test partitions by assigning the initial 20s of each recording to training.
+The reconstructions are accurate enough to allow for meaningful classification (see figures below). 
+
+In the cross-subject variant, where we investigate the ability for cross-subject generalization and a different portion of subjects is used for training and testing, 
+we don't achieve any meaningful results in the reconstruction task. 
+This matches the established accuracies in the song ID prediction task for this variant, which were much lower and were all between 12\% and 18\%, compared to the 57\% to 85\% range.
+
+
+\begin{figure}[h]
+  \centering
+  \textbf{Accuracy scores in the temporal-split}
+  \vspace{0.3cm}
+  
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/auroc_median_rank_plot.png}
+    \caption{For a generated mel spectrogram, we calculate similarities with all 120 real spectrograms from the current batch. We then sort the spectrograms based on the similarity scores and find out what the rank of the true spectrogram is to assess the quality of our predicted one. The plot shows the median rank for two used similarity measures: cosine similarity and structural similarity.}
+    \label{fig:auroc-median-rank}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/auroc_score_plot.png}
+    \caption{AUROC score counts the ratio of times when the real spectrogram is ranked in the first half of the sorted order. It can be interpreted as the probability that the predicted spectrogram is closer to the real spectrogram than to a randomly sampled spectrogram.}
+    \label{fig:auroc-score}
+  \end{minipage}
+\end{figure}
+
+
+\begin{figure}[h]
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8653_82c00f99e0bb079a497f.png} &
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8653_8c3ea155cfdde6d1ee92.png} \\
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8653_8fed809dd87da9f5b5f0.png} &
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8653_f0d90e1a1f7ae3ca67ea.png} \\
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8658_54ba5db2984c3817cb8d.png} &
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8658_7942d7e56630eac823de.png} \\
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8658_7baf70115b8f56210f30.png} &
+    \includegraphics[width=0.48\textwidth]{imgs/spectrograms/media_images_val_spectrograms_8658_9f4076f20a86ba1957bf.png}
+  \end{tabular}
+  \caption{Reconstructed spectrograms.}
+  \label{fig:reconstructed-spectrograms}
+\end{figure}
+
+Looking at the reconstructed spectrograms, we can notice that the network has not yet learned the high-resolution temporal aspects of the songs.
+It cannot mark note onsets accurately. Instead, it tends to produce smooth spectrograms with almost equally colored rows that show the average power in a frequency band.
 
 
 % \section{EEG analysis}
