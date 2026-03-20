@@ -51,10 +51,10 @@ We use four different model types: KNN, SVM, XGBoost and a Convolutional Neural 
 
 For a discussion of the KNN, SVM, and XGBoost models, we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
 
-We define three related CNN networks: two variants for the classification task (taking either band-power processed data or raw EEG data as input) and one for the music reconstruction task.
-The classification networks are convolutional neural networks with 3 convolutional layers and a fully-connected layer.
-They differ in the input dimensionality they are designed to work with: one takes EEG images after preprocessing, including band power calculation, which results in 1s snippets of shape \( 60\times 10\).
-The other takes raw EEG data, which has a shape of \( 129\times 256\) and is used for the ablation study in the appendix. The models have 35,188 and 64,660 parameters, respectively.
+We define two related CNN networks: for the classification task and for the music reconstruction task.
+The classification network is convolutional neural network with 3 convolutional layers and a fully-connected layer.
+It is designed to work with EEG images after preprocessing, which results in 1s snippets of shape \( 60\times 10\).
+The model has 35,188 parameters.
 
 % table with layers of cnn 
 \begin{table}[h]
