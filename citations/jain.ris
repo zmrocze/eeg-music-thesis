@@ -1,0 +1,22 @@
+TY  - JOUR
+AU  - Wu, Youpeng
+AU  - Lu, Lun
+AU  - Xu, Ao
+AU  - Wang, Yinan
+AU  - Li, Zhiwei
+AU  - Yang, Zhuanyi
+AU  - Zeng, Lingli
+AU  - Li, Qingjiang
+PY  - 2025
+DA  - 2025/12/09
+TI  - Neural networks for epilepsy detection and prediction with EEG signals: a systematic review
+JO  - Artificial Intelligence Review
+SP  - 30
+VL  - 59
+IS  - 1
+AB  - Epilepsy is a neurological disorder characterized by abnormal neuronal discharges in the brain. As a rich source of biometric information, electroencephalography (EEG) provides favorable conditions for automated detection. Traditional algorithms and manual analysis possess solid theoretical foundations and good interpretability, however, these methods predominantly require extensive domain expertise and involve lengthy processing pipelines for complex data. The advent of artificial intelligence (AI) has facilitated the application of neural networks in the detection and prediction of epilepsy. Although such approaches heavily rely on high-quality annotated data, suffer from limited model interpretability, and involve complex training and parameter tuning, these efficient, real-time, end-to-end models still demonstrate significant potential in epilepsy analysis. This review systematically analyzes and summarizes the neural network technologies used in 341 papers published in the past three years, employing the PRISMA standard procedure. To facilitate readers’ related research, the review also summarizes the basic information of 16 publicly available datasets, common features, and metrics. Specifically, this review offers a comprehensive evaluation of diverse neural network architectures, concluding that convolutional neural networks have become a prevalent choice as classic neural networks. Furthermore, graph neural networks and transformers are experiencing a marked surge in popularity. The application of hybrid neural networks to fully extract information from EEG is also a growing trend. The review concludes with a comprehensive discussion and summary of the technical characteristics, research directions, and limitations of current methods, including patient-to-patient identification, explainable AI, dataset bias, and zone location.
+SN  - 1573-7462
+UR  - https://doi.org/10.1007/s10462-025-11441-1
+DO  - 10.1007/s10462-025-11441-1
+ID  - Wu2025
+ER  - 

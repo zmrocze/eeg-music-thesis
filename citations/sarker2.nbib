@@ -1,0 +1,75 @@
+PMID- 34426802
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+LR  - 20221029
+IS  - 2661-8907 (Electronic)
+IS  - 2662-995X (Print)
+IS  - 2661-8907 (Linking)
+VI  - 2
+IP  - 6
+DP  - 2021
+TI  - Deep Learning: A Comprehensive Overview on Techniques, Taxonomy, Applications and 
+      Research Directions.
+PG  - 420
+LID - 10.1007/s42979-021-00815-1 [doi]
+LID - 420
+AB  - Deep learning (DL), a branch of machine learning (ML) and artificial intelligence 
+      (AI) is nowadays considered as a core technology of today's Fourth Industrial 
+      Revolution (4IR or Industry 4.0). Due to its learning capabilities from data, DL 
+      technology originated from artificial neural network (ANN), has become a hot 
+      topic in the context of computing, and is widely applied in various application 
+      areas like healthcare, visual recognition, text analytics, cybersecurity, and 
+      many more. However, building an appropriate DL model is a challenging task, due 
+      to the dynamic nature and variations in real-world problems and data. Moreover, 
+      the lack of core understanding turns DL methods into black-box machines that 
+      hamper development at the standard level. This article presents a structured and 
+      comprehensive view on DL techniques including a taxonomy considering various 
+      types of real-world tasks like supervised or unsupervised. In our taxonomy, we 
+      take into account deep networks for supervised or discriminative learning, 
+      unsupervised or generative learning as well as hybrid learning and relevant 
+      others. We also summarize real-world application areas where deep learning 
+      techniques can be used. Finally, we point out ten potential aspects for future 
+      generation DL modeling with research directions. Overall, this article aims to 
+      draw a big picture on DL modeling that can be used as a reference guide for both 
+      academia and industry professionals.
+CI  - © The Author(s), under exclusive licence to Springer Nature Singapore Pte Ltd 
+      2021.
+FAU - Sarker, Iqbal H
+AU  - Sarker IH
+AUID- ORCID: 0000-0003-1740-5517
+AD  - Swinburne University of Technology, Melbourne, VIC 3122 Australia. GRID: 
+      grid.1027.4. ISNI: 0000 0004 0409 2862
+AD  - Chittagong University of Engineering & Technology, Chittagong, 4349 Bangladesh. 
+      GRID: grid.442957.9
+LA  - eng
+PT  - Journal Article
+PT  - Review
+DEP - 20210818
+PL  - Singapore
+TA  - SN Comput Sci
+JT  - SN computer science
+JID - 101772308
+PMC - PMC8372231
+OTO - NOTNLM
+OT  - Artificial intelligence
+OT  - Artificial neural network
+OT  - Deep learning
+OT  - Discriminative learning
+OT  - Generative learning
+OT  - Hybrid learning
+OT  - Intelligent systems
+COIS- Conflict of interestThe author declares no conflict of interest.
+EDAT- 2021/08/25 06:00
+MHDA- 2021/08/25 06:01
+PMCR- 2021/08/18
+CRDT- 2021/08/24 06:23
+PHST- 2021/05/29 00:00 [received]
+PHST- 2021/08/07 00:00 [accepted]
+PHST- 2021/08/24 06:23 [entrez]
+PHST- 2021/08/25 06:00 [pubmed]
+PHST- 2021/08/25 06:01 [medline]
+PHST- 2021/08/18 00:00 [pmc-release]
+AID - 815 [pii]
+AID - 10.1007/s42979-021-00815-1 [doi]
+PST - ppublish
+SO  - SN Comput Sci. 2021;2(6):420. doi: 10.1007/s42979-021-00815-1. Epub 2021 Aug 18.

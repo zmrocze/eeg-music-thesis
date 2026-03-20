@@ -1,0 +1,74 @@
+PMID- 33778771
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+LR  - 20220218
+IS  - 2661-8907 (Electronic)
+IS  - 2662-995X (Print)
+IS  - 2661-8907 (Linking)
+VI  - 2
+IP  - 3
+DP  - 2021
+TI  - Machine Learning: Algorithms, Real-World Applications and Research Directions.
+PG  - 160
+LID - 10.1007/s42979-021-00592-x [doi]
+LID - 160
+AB  - In the current age of the Fourth Industrial Revolution (4IR or Industry 4.0), the 
+      digital world has a wealth of data, such as Internet of Things (IoT) data, 
+      cybersecurity data, mobile data, business data, social media data, health data, 
+      etc. To intelligently analyze these data and develop the corresponding smart and 
+      automated applications, the knowledge of artificial intelligence (AI), 
+      particularly, machine learning (ML) is the key. Various types of machine learning 
+      algorithms such as supervised, unsupervised, semi-supervised, and reinforcement 
+      learning exist in the area. Besides, the deep learning, which is part of a 
+      broader family of machine learning methods, can intelligently analyze the data on 
+      a large scale. In this paper, we present a comprehensive view on these machine 
+      learning algorithms that can be applied to enhance the intelligence and the 
+      capabilities of an application. Thus, this study's key contribution is explaining 
+      the principles of different machine learning techniques and their applicability 
+      in various real-world application domains, such as cybersecurity systems, smart 
+      cities, healthcare, e-commerce, agriculture, and many more. We also highlight the 
+      challenges and potential research directions based on our study. Overall, this 
+      paper aims to serve as a reference point for both academia and industry 
+      professionals as well as for decision-makers in various real-world situations 
+      and application areas, particularly from the technical point of view.
+CI  - © The Author(s), under exclusive licence to Springer Nature Singapore Pte Ltd 
+      2021.
+FAU - Sarker, Iqbal H
+AU  - Sarker IH
+AUID- ORCID: 0000-0003-1740-5517
+AD  - Swinburne University of Technology, Melbourne, VIC 3122 Australia. GRID: 
+      grid.1027.4. ISNI: 0000 0004 0409 2862
+AD  - Department of Computer Science and Engineering, Chittagong University of 
+      Engineering & Technology, 4349 Chattogram, Bangladesh. GRID: grid.442957.9
+LA  - eng
+PT  - Journal Article
+PT  - Review
+DEP - 20210322
+PL  - Singapore
+TA  - SN Comput Sci
+JT  - SN computer science
+JID - 101772308
+PMC - PMC7983091
+OTO - NOTNLM
+OT  - Artificial intelligence
+OT  - Data science
+OT  - Data-driven decision-making
+OT  - Deep learning
+OT  - Intelligent applications
+OT  - Machine learning
+OT  - Predictive analytics
+COIS- Conflict of interestThe author declares no conflict of interest.
+EDAT- 2021/03/30 06:00
+MHDA- 2021/03/30 06:01
+PMCR- 2021/03/22
+CRDT- 2021/03/29 06:45
+PHST- 2021/01/27 00:00 [received]
+PHST- 2021/03/12 00:00 [accepted]
+PHST- 2021/03/29 06:45 [entrez]
+PHST- 2021/03/30 06:00 [pubmed]
+PHST- 2021/03/30 06:01 [medline]
+PHST- 2021/03/22 00:00 [pmc-release]
+AID - 592 [pii]
+AID - 10.1007/s42979-021-00592-x [doi]
+PST - ppublish
+SO  - SN Comput Sci. 2021;2(3):160. doi: 10.1007/s42979-021-00592-x. Epub 2021 Mar 22.
