@@ -13,6 +13,13 @@ Before concatenation, we apply z-score normalization per frequency band.
 
 \begin{figure}[h]
   \centering
+  \makebox[\textwidth]{\includegraphics[width=1.1\linewidth]{imgs/preprocessing_pipeline.pdf}}
+  \caption{EEG preprocessing pipeline.}
+  \label{fig:preprocessing-pipeline}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\linewidth]{imgs/eeg_signal_10s_bl_wh.png}
@@ -40,6 +47,8 @@ It was found that varying the length between 3s, 5s, 10s, and 20s impacts classi
 This acts like a data augmentation method.
 To avoid the Birthday Problem when randomly sampled segments often strongly overlap over part of the full recording, we 
 use stratified sampling method, where first one of \( k \) segments is picked (one after another) and then a random snippet starting within chosen segment is sampled, spreading the distribution more evenly across the whole recording.
+
+
 
 \section{Note onset feature extraction}
 
