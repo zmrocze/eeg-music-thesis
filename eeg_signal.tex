@@ -4,27 +4,34 @@
 \section{Overview}
 
 Electroencephalography (EEG) is a non-invasive technique used to record electrical activity of the brain\cite{Mushtaq2024}.
-It involves placing electrodes on the scalp to record electrical activity of the brain --- the electroencephalogram (also EEG).
+It involves placing electrodes on the scalp to record electrical activity of the brain---the electroencephalogram (also EEG).
 Each electrode records the voltage fluctuations resulting from the synchronized discharges of the working neurons in the brain.
 By subtracting the reference electrode reading from a reading of an electrode of interest we cancel out the common environmental noise and get a signal that constitutes a single channel of an EEG recording.
 The amplitude of the resulting signal is in the order of microvolts and very sensitive to any head movements, which need to be minimized during a recording session.
 Modern equipment captures these fluctuations with upwards of 1000 Hz temporal resolution, allowing for precise linking between the brain's recorded activity and external stimuli.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{imgs/eeg_headband.jpg}
+\caption{EEG Headband: EEG headband with connected electrodes.}
+\label{fig:eeg_headband}
+\end{figure}
 
 \section{History}
 
-A British physician, Richard Caton, was the first to discover in 1875 that the brain --- specifically of rabbits and monkeys --- elicits electrical activity and, furthermore, that this activity seems related to its function\cite{caton}. For his discovery, he used a galvanometer, invented earlier in 1820 and used in laboratories and telecommunication.
-At the time of his discovery, it was already known that nerves conduct electrical signals and that these signals are used to trigger muscle tissue to contract\cite{mattucci1}\cite{matteucci2}.
+A British physician, Richard Caton, was the first to discover in 1875 that the brain---specifically of rabbits and monkeys---elicits electrical activity and, furthermore, that this activity seems related to its function\cite{caton}. For his discovery, he used a galvanometer, invented earlier in 1820 and used in laboratories and telecommunication.
+At the time of his discovery, it was already known that nerves conduct electrical signals and that these signals are used to trigger muscle tissue to contract\cite{mattucci1, matteucci2}.
 In 1901, a Dutch medical doctor, Willem Einthoven, invented a more precise string galvanometer and used it to record an electrocardiogram (ECG)\cite{about_einthoven}. By placing electrodes on the left and right arms and a leg, he measured the electrical signal produced by a beating heart. The device functioned by placing a fine conducting string within a magnetic field created by two powerful electromagnets; the electrical signal caused this string to deflect. He was later awarded the Nobel Prize in Physiology or Medicine for his discovery.
 Later, in 1912, a Ukrainian physiologist, Vladimir Pravdich-Neminsky, used this invention and published the first EEG recording recorded from a dog\cite{about_vladimir}.
 
-In 1924 --- which coincidently was the year when Einthoven was awarded his Nobel Prize --- a German psychiatrist, Hans Berger, while looking for the physiological basis for telepathy, recorded the first human EEG and discovered the ``alpha wave''—the frequency present in the signal when a person is awake\cite{about_berger}.
+In 1924---which coincidently was the year when Einthoven was awarded his Nobel Prize---a German psychiatrist, Hans Berger, while looking for the physiological basis for telepathy, recorded the first human EEG and discovered the ``alpha wave''—the frequency present in the signal when a person is awake\cite{about_berger}.
 His discovery was initially met with skepticism\cite{Mushtaq2024}, which changed a decade later when Frederick Gibbs and others used EEG to describe specific, repeatable patterns in electrical activity during epilepsy\cite{about_gibson}.
 Later, in the 50s, the EEG signal was used to research sleep.
 In 1953, researchers discovered the REM (Rapid Eye Movement) sleep phase, characterized by rapid eye movements and high-frequency, low-voltage EEG activity, akin to alertness, which is often the phase when dreaming occurs\cite{rem_sleep}.
 Later, a standardized way to divide sleep into sleep stages based on EEG was developed\cite{sleep_stage}.
 
 Already in 1973, the first demonstration of a brain-computer interface (BCI) was seen, where the EEG signal was used to control a cursor on a screen\cite{vidal}.
+The demonstration was succesfull with participants being able to control a mouse cursor out of a labirynth.
 This decade also saw the first use of computers to analyze the EEG signal, and later the analysis and collection of EEG data became purely digital.
 In the 1980s, laboratories started syncing EEG recordings with video recordings of the subject, allowing for more detailed studies of the relationship between brain activity and behavior\cite{gloor}.
 
@@ -38,8 +45,9 @@ The EEG signal has a few characteristics that make it extra challenging to proce
 
 \subsection{Non-stationarity}
 
-A non-stationary process is one whose statistical properties --- like mean, variance, or autocorrelation --- change over time. 
+A non-stationary process is one whose statistical properties---like mean, variance, or autocorrelation---change over time. 
 The EEG signal is non-stationary\cite{nonstationary} because the brain's activity is dynamic and influenced by various internal and external factors, such as cognitive processes, sensory inputs, emotional states, and physiological changes like variations in skin impedance.
+Even when the signal is standarized with respect to the reference electrode, the non-stationarity of the signal remains i.e. because of skin impedance changes at the reference electrode itself.
 Without any adaptations, this renders many classical statistical methods of data analysis ineffective.
 This suggests that the normalization of signal data should be done on a per-window basis.
 
@@ -48,6 +56,7 @@ This suggests that the normalization of signal data should be done on a per-wind
 Because the amplitude of neural oscillations as seen in the EEG signal is so low, requiring precise measurement, even small movements and external factors can introduce significant noise and artifacts into the recordings.
 Specifically, any head movements or eye blinks cause large artifacts in the signal. It can also happen that an electrode loses contact with the skin or that heartbeats appear from an electrode placed near a large blood vessel.
 Given the small sample size, this often necessitates marking and removing the artifacts from the data.
+We do this by applying decomposition of EEG signal into separate components and doing classification on the components.
 
 \subsection{Expensive and time-consuming data collection}
 
@@ -55,11 +64,35 @@ Collecting EEG data requires specialized, expensive equipment and qualified pers
 It also requires finding subjects willing to participate in the study and fitting the study requirements.
 For these reasons, EEG datasets are often small, counting hundreds to thousands of samples collected from up to a few dozen subjects.
 
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|c|c|c|p{5cm}|}
+\hline
+Dataset Name & Participants & Samples & Total Hours & Stimulus Type \& Setup \\
+\hline
+MUSIN-G & 20 & 240 & ~7.7 & 12 full songs across various genres (Indian Classical, Goth Rock, etc.). Rated for familiarity and enjoyment. \\
+\hline
+BCMI-Training & 10 & 2,400 & ~10.6 & Synthetic music generated in real-time. Part of a larger dataset evaluating an online BCMI system. \\
+\hline
+OpenMIIR & 10 & 2,400 & ~6.9 & 12 short musical fragments. Recorded during both music perception (listening) and music imagination (thinking of the song). \\
+\hline
+NMED-T & 20 & 200 & ~15.8 & 10 full-length Electronic Dance Music (EDM) songs. Focuses on continuous naturalistic listening and tempo. \\
+\hline
+ZBra / Wearable Music2Emotion & 44 & 1,760 & ~29.3 & 101 AI-generated music clips designed to elicit specific target emotions (arousal/valence). Fuses EEG and fNIRS data. \\
+\hline
+DEAP & 32 & 1,280 & ~21.3 & 40 one-minute music video excerpts. Widely used benchmark dataset for emotion classification (arousal, valence, dominance, liking). \\
+\hline
+\end{tabular}
+\caption{Comparison of EEG music datasets}
+\label{tab:eeg-datasets}
+\end{table}
+
 \subsection{Noise}
 
 Given the low amplitude of the EEG signal, it is very susceptible to any external noise.
 Commonly, EEG data preprocessing includes filtering the 50 or 60 Hz power line noise, which appears as thick fuzz on the signal.
-In studies that combine music listening with EEG collection, the music itself would be a source of noise.
+In studies that combine music listening with EEG collection, the music itself as an accoustic wave would be a source of noise.
 To mitigate this, studies can use electromagnetically shielded insert earphones\cite{nozaradan}, which pump the sound directly into the ear via hollow plastic tubes, keeping the transducer (the part that creates sound) further away from the EEG apparatus.
 
 \subsection{Signal-to-noise ratio}
@@ -72,9 +105,9 @@ A common way of analyzing EEG data involves averaging the EEG response at fixed 
 
 \section{Preprocessing}
 
-To mitigate the above challenges, various preprocessing techniques are used to clean the data and extract relevant features.
+To mitigate the above challenges, various preprocessing techniques are used to clean the data and extract relevant features \cite{cyril}.
 % Some of these techniques became standardized in a form of python or matlab libraries, which are widely used in the field.
-We generally consider the EEG signal to be a two-dimensional array of shape (n\_channels, n\_timepoints), where n\_channels is the number of electrodes used in the recording and n\_timepoints is the number of time points recorded for each channel.
+We generally consider the EEG signal to be a two-dimensional array of shape (n\_channels, n\_timepoints), where n\_channels is the number of electrodes used in the recording and n\_timepoints is the number of time points recorded for each channel, containing electrical potentials measured at each electrode over a period of time.
 
 \subsection{Filtering}
 
@@ -85,7 +118,7 @@ The power noise is removed with a notch filter at 50 or 60 Hz, depending on the 
 
 \subsubsection{Band power processing}
 
-A common signal processing technique --- also applied to EEG data --- is to filter the signal into chosen frequency bands and then calculate the power of the signal in each band, which is a measure of the strength of the oscillations in that band.
+A common signal processing technique---also applied to EEG data---is to filter the signal into chosen frequency bands and then calculate the power of the signal in each band, which is a measure of the strength of the oscillations in that band.
 Over the years, an array of research has been done linking specific frequency bands in the EEG signal to specific cognitive processes, with different roles linked to different frequency bands\cite{basar}.
 This guides the choice of frequency bands to be used for band power processing.
 
@@ -129,15 +162,22 @@ In this formulation, the solution \( \mathbf{s} \) is not unique, and specifical
 Also, the transform is applied independently to each recorded EEG snippet, making the subsequent analysis a harder problem.
 To mitigate this, an ordering can be fixed by sorting the independent components by how much variance of the original signal they explain (Variance Accounted For (VAF)).
 
+See \cite{frolich} for thorough explanation on the ICA method.
+
 \subsection{Artifact classification and removal}
 
 Once a signal is decomposed into independent components, we gain a potent tool for artifact removal.
-By classifying a component into what type of activity it represents --- e.g., eye blinks, heartbeats, muscle activity, brain activity --- we can choose to remove the components that are classified as artifacts and reconstruct the signal without them.
-The classification can be done with a neural network trained on expert-labeled data\cite{iclabel}. Modern-day trained classifiers like this are a common inclusion in EEG processing libraries.
+By classifying a component into what type of activity it represents---e.g., eye blinks, heartbeats, muscle activity, brain activity---we can choose to remove the components that are classified as artifacts and reconstruct the signal without them.
+The classification can be done with a neural network trained on expert-labeled data\cite{iclabel}. Modern-day trained classifiers like this are a common inclusion in EEG processing libraries like ``mne\_icalabel''.
 
 \subsection{Normalization}
 
-There are a few reasonable ways to normalize the signal, such as z-score normalization, min-max normalization, or robust normalization.
+There are a few reasonable ways to normalize the signal:
+\begin{itemize}
+  \item \textbf{Z-score normalization}: Transforms the data to have zero mean and unit variance by subtracting the mean and dividing by the standard deviation.
+  \item \textbf{Min-max normalization}: Scales the data to a fixed range (typically [0, 1]) by subtracting the minimum value and dividing by the range.
+  \item \textbf{Robust normalization}: Uses the median and interquartile range instead of mean and standard deviation, making it less sensitive to outliers.
+\end{itemize}
 Because of the non-stationarity of the signal, it is common to apply normalization on a per-window basis, where a window is a short segment of the full recording.
 What remains to be chosen is whether the normalization should apply per channel independently or jointly across all channels.
 Simply removing the mean across all channels is called rereferencing.

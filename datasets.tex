@@ -1,11 +1,40 @@
 \chapter{Datasets}
 
-We test our hypotheses on two datasets: MUSIN-G\cite{musing} and what we call BCMI-training\cite{bcmi}.
+We run our experiments on two datasets: MUSIN-G\cite{musing} and what we call BCMI-training\cite{bcmi}.
+Both contain joint EEG and music recordings, but while MUSIN-G contains natural music, BCMI-training contains computer-generated music.
+We choose the two datasets to test our hypothesis both on generated but uniform and natural music.
 
 \section{MUSIN-G}
 
-It is a dataset of joint music and EEG recordings of 20 non-musician subjects, aged 22-28 years.
+It is a dataset of joint music and EEG recordings of 20 non-musician subjects, aged 22-28 years\cite{musing}.
+Data was acquires using high-density Hydrocel Geodesic Sensor Net.
 Each subject was presented with 12 songs of various genres, ranging from Indian Folk to Electronic Dance.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|c|}
+\hline
+Song Name & Artist & Genre & Length (s) \\
+\hline
+Trip to the Lonely Planet & Mark Alow & Deep House & 125 \\
+Sail & AWOLNATION & Electric Pop & 114 \\
+Concept 15 & Kodomo & Electronic & 132 \\
+Aurore & Claire David & New Age & 111 \\
+Proof & Idiotape & Electronic & 124 \\
+Glider & Tycho & Slow Electronic & 100 \\
+Raag Bihag & Pandit Hariprasad Chaurasia & Hindustani Classical & 116 \\
+Albela Sajan & Shankar Mahadevan & Indian Semi-Classical & 121 \\
+Mor Bani Thanghat Kare & Aditi Paul & Indian Folk & 126 \\
+Fallin & Dr. SaxLove & Soft Jazz & 129 \\
+Master of Running & Rickeyabo & Goth Rock & 113 \\
+JB & Nobody.one & Progressive Instrumental & 117 \\
+\hline
+\end{tabular}
+\caption{MUSIN-G dataset songs}
+\label{tab:musing-songs}
+\end{table}
+
+
 
 \section{BCMI-training}
 
@@ -18,7 +47,12 @@ For our purposes, we split such trials into two separate recordings, one for eac
 
 \section{Dataset processing}
 
-In addition to the methods, we describe how a dataset is loaded for a study using our library.
+The raw datasets are preprocessed for the use in our experiments.
+To efficiently construct various variants of the datasets, including different preprocessing methods, we created a library for dataset handling and processing.
+The library itself uses libraries like "librosa" and "essentia" for audio processing and "mne" for EEG processing.
+The library allows for loading of the two datasets to a common format, lazy evaluation of preprocessing steps, defines a standard on disk storage format and simplifies dataset operations like filtering. 
+It also allows to combine datasets, but we didn't end up using this feature.
+We show below how a dataset is loaded for a study using our library.
 
 We unify the various analyzed datasets under the `EEGMusicDataset` class, which provides a common interface to access the data and metadata of the recordings.
 Then, various preprocessing functions are applied to the data; their evaluation is lazy.

@@ -56,9 +56,16 @@ For the task of detecting note onsets, we use the essentia\cite{essentia} librar
 
 \section{Models}
 
-We use four different model types: KNN, SVM, XGBoost and a Convolutional Neural Network.
+We use five different model types: KNN, SVM, XGBoost, a Convolutional Neural Network and an LSTM.
 
-For a discussion of the KNN, SVM, and XGBoost models, we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
+\subsection{KNN, SVM, XGBoost}
+
+We employ a KNN model, where a prediction is given by an averaged values of 5 nearest neighbors in euclidean space.
+SVM or Support Vector Machines model is a kernel method, where we use the 'Radial Basis Function' kernel.
+The XGBoost model is a tree ensamble method, in our case 100 decision trees with a maximum depth of 6 are used together to vote for a prediction.
+For a further discussion on the KNN, SVM, and XGBoost models, we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
+
+\subsection{CNN}
 
 We define two related CNN networks: for the classification task and for the music reconstruction task.
 The classification network is convolutional neural network with 3 convolutional layers and a fully-connected layer.
@@ -185,6 +192,27 @@ Conv2D & $1 \times 1$ & $[B, 2, 64, 64] \to [B, 1, 64, 64]$ \\
 \label{tab:cnn-reconstruction-layers}
 \end{table}
 
+
+\subsection{DTW}
+
+DTW is an algorithm that finds an optimal alignment between two sequences.
+
+We employ a generalized version called approximate-subsequence-DTW, which can be defined by:
+\begin{enumerate}
+  \item Given two sequences $A$ and $B$, it finds a match between an infix of $A$ and infix of $B$.
+  \item The summed distances between the matched points are within the cost allowance.
+  \item The matched infix is of maximal length.
+\end{enumerate}
+
+This means that the algorithm pairs points from one sequence, or just an infix of it, with points from the other sequence.
+As many points are matched as is possible within the cost constraint, which specifies what is the sum of differences between the matched points.
+The algorithm is a variant of the standard DTW dynamic programming algorithm.
+
+\subsection{LSTM}
+
+LSTM, or more specifically Bi-LSTM (an LSTM with bidirectional information flow), is a recurrent neural network operating on raw EEG timeseries.
+We use variants operating on 12 or 129 EEG channels, with 2 hidden layers and 256 hidden units.
+The output of the network is a scalar.
 
 % \section{Neurals Networks}
 

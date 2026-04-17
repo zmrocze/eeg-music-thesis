@@ -9,6 +9,13 @@ Nevertheless, the capability seems limited.
 Song identification and reconstruction struggle to generalize across subjects. 
 We hypothesize that the datasets are too small for this task, counting only 20 and 10 participants.
 Song reconstruction lacks high-resolution temporal details, but the average frequency band power is captured. 
+We see this as an extension of the song identification success, where not only a song id but also a specific portion of a song as described by the averaged spectrogram is predicted.
 The success of the DTW experiment casts doubt on the claim that the song identification task requires extraction of higher-level features.
+We find the optimal performance at the medium model size.
+% ____experiment smaller models____
 We propose a task of music ``density'' prediction to test the ability for purely musical feature prediction.
 We achieve success in that task, but the seemingly mediocre performance of the density prediction model doesn't make the claim fully convincing.
+We weren't able to perform rhythm decoding.
+
+The contribution of this work is to demonstrate that machine learning models can extract musically meaningful features from EEG data.
+By comparing performance at various tasks using related methods and analyzing the results, we understood better the sources of difficulty in decoding music from EEG.

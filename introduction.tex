@@ -5,12 +5,27 @@ What initially required manual inspection is being superseded by automated compu
 The ability to infer signals from EEG recordings has sparked hope for the eventual use of EEG in Brain-Computer Interfaces (BCI).
 Our work explores one such avenue.
 
-We analyze datasets of EEG recordings while participants listened to music.
+We analyze datasets of EEG recordings while participants listened to music, so that the dataset is a set of EEG + music pairs.
 We attempt to infer music properties from the EEG signals with machine learning methods.
-We succeed at the song classification task but observe poor cross-subject generalization.
-We try to explain this result with an experiment that attempts to perform song identification using a classical DTW algorithm.
+Expecting the problem of full music reconstruction to be hard, we ramp up to it by solving few prediction tasks attempting to decode a discrete set of features, demonstrating first that any such decoding is possible.
 
-We attempt emotion classification, which, despite being similar to song identification, shows poor results. 
-We also define a novel classification task based on the number of note onsets in a fragment of a musical recording and solve it using our methods.
+We start with a task of predicting a song name from the EEG signal.
+We succeed at this song classification task but observe poor cross-subject generalization.
+We try to explain this result with an experiment that attempts to perform song identification using a classical EEG sequence matching algorithm.
 
-Lastly, we tackle the harder than classification problem of music decoding from EEG and achieve results good enough to perform classification on, but the poor generalization problem persists.
+We attempt emotion classification, where emotion labels are part of the dataset, which is similar task to song identification. 
+Looking for more musical features,
+we also define a novel classification task based on the number of note onsets in a fragment of a musical recording and solve it using our methods.
+
+Lastly, we tackle the harder than classification problem of music decoding from EEG in a form of a spectrogram and achieve results good enough to perform classification on, but the poor generalization problem persists.
+We also try to decode the rhythm of the music with a different method, trying to predict it in a form of an envelope.
+
+This work researches the limits, applicability and modifications of methods for EEG classification tasks and elucidates some aspects of why music decoding from EEG remains a challenging problem.
+
+The work is structured as follows:
+ - we describe the EEG signal broadly
+ - we describe the datasets and methods used in this work
+ - provide the results
+ - and ablation studies
+
+ 

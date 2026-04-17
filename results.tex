@@ -1,5 +1,9 @@
 
-\chapter{Results}
+\chapter{Experiments}
+
+We attempt to decode progressively harder features of the music signal from the EEG recordings.
+We utilize the preprocessing pipeline described in the previous section.
+For the Bi-LSTM model, we skip the final band power extraction step and feed the filtered EEG signal directly to the network.
 
 \section{Song name prediction}
 
@@ -7,6 +11,7 @@ We start with the task of predicting the song name of a listened-to song based o
 We split the MUSIN-G dataset into recordings of 12 subjects for training and the remaining 8 subjects for testing (for CNN, half of the test set serves as the validation set).
 We then train a model to predict the song name from the EEG signal.
 We achieve the below results for each variant of the tested model.
+For the CNN model we provide the best result out of the few tested variants, described below.
 
 \begin{table}[h]
   \centering
@@ -14,10 +19,11 @@ We achieve the below results for each variant of the tested model.
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
+    Random  &  0.0833  \\
     KNN     & 0.1374 \\
     SVM     & 0.1229 \\
     XGBoost & 0.1668 \\
-    CNN      & 0.1740 \\
+    CNN (best)      & \textbf{0.1802} \\
     \hline
   \end{tabular}
   \caption{Song name prediction accuracy: subject-wise split.}
@@ -26,6 +32,16 @@ We achieve the below results for each variant of the tested model.
 
 
 Our results are comparable to the study by Pandey et al.\cite{pandey}, in which researchers achieved 12.5\% mean subject accuracy (a random classifier gives \(  \frac{1}{12} = 0.08(3) \)).
+
+We also tested how the number of parameters influences the model's performance. We kept the architecture and varied number of convolution channels. The results are shown below.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{imgs/cnn_channels_accuracy.png}
+  \caption{CNN accuracy as a function of the number of convolution channels.}
+  \label{fig:cnn-channels-accuracy}
+\end{figure}
+
 
 In the above study, researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
 by taking the initial \( n \) seconds of each recording as training data and the remaining seconds as testing data. The study compares results that can be achieved for a few chosen \( n \) parameters (\(3, 5, 10, 20\)), achieving higher accuracy for larger training partitions.
@@ -38,22 +54,25 @@ We are able to reproduce these results, and for \( n=20 \) we achieve accuracies
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
-    XGBoost & 0.85 \\
+    XGBoost & \textbf{0.85} \\
     SVM     & 0.57 \\
     KNN     & 0.64 \\
-    NN      & - \\
+    NN      & 0.72 \\
     \hline
   \end{tabular}
   \caption{Song id prediction accuracy in the MUSIN-G dataset: temporal split.}
   \label{tab:song-id-temporal-split}
 \end{table}
 
-This poor generalization suggests that the model in this second variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
+While the best model in the trial-wise split variant achieves 0.85\% accuracy, the best model in subject-wise split variant achieves only 0.18\%.
+This means that the model fails to learn neural patterns that generalize across subjects.
+This poor generalization suggests that the model in this trial-wise variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
 We test the hypothesis with two experiments. 
 
 First, we run a similar experiment on the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
 The recordings share the ``emotionality'' of the listened-to music, but no listened-to song repeats across the dataset as the songs are computer-generated for each trial.
 We find that, similarly to the study, classifiers are able to predict the trial ID from the EEG signal with high accuracy. 
+The results are shown in the below table.
 
 \begin{table}[h]
   \centering
@@ -62,12 +81,13 @@ We find that, similarly to the study, classifiers are able to predict the trial 
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
     XGBoost & 0.78 \\
-    SVM     & 0.91 \\
+    SVM     & \textbf{0.91} \\
     KNN     & 0.88 \\
-    NN      & ---    \\
+    CNN      & ---    \\
     \hline
   \end{tabular}
-  \caption{Song id prediction experiment in the single subject variant in the BCMI-training dataset.}
+  \caption{Song id prediction experiment in the BCMI-training dataset.}
+  % \caption{Song id prediction experiment in the single subject variant in the BCMI-training dataset.}
   \label{tab:song-id-single-subject}
 \end{table}
 
@@ -78,17 +98,18 @@ We attempt to predict the trial ID using the DTW algorithm.
 
 DTW in its most basic form is a method of measuring the distance between two time series by finding an optimal alignment between them.
 Such an alignment is a match between points of one time series and points of the other time series that minimizes the sum of distances between matched points, 
-starts and ends at the two matched ends of the two time series, and is monotonic in between.
-We employ a generalized version called approximate-subsequence-DTW, which can be defined by:
-\begin{enumerate}
-  \item Given two sequences $A$ and $B$, it finds a match between an infix of $A$ and $B$.
-  \item The summed distances between the matched points are within the cost allowance.
-  \item The matched infix is of maximal length.
-\end{enumerate}
+starts and ends at the two matched ends of the two time series, and is monotonic in between. 
+
+We employ a version of the algorithm called approximate-subsequence-DTW, described in the methods section.
+The algorithm allows for calculation of alignment cost between some infixes of the two sequences.
+We use it to compare a "similarity" of one sequence to another.
+Running it on two EEG sequences, we find what is the longest fragment that approximately repeats across the two signals.
+Matching a test trial with every trial from a training set and comparing the lengths of the matches, we can find the most similar trial and use it to assign a prediction.
 
 For a single subject of the BCMI-training dataset, we predict the trial ID of a test trial by finding, across all training trials,
 the one that scores the highest when calculating the approximate-subsequence-DTW distance between the test trial and the training trial.
 We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
+The cost parameter specifies how much cummulative difference between the matched points of the two sequence we allow.
 With this simple method we achieve 50.83\% test accuracy.
 % Accuracy: 61/120 = 50.83%
 The experiment is meant to showcase that such direct pattern matching is possible and therefore---it is possible for the model to learn it and rely on it greatly, with little generalization capability.
@@ -110,7 +131,7 @@ Method  & Accuracy \\
 XGBoost & 0.1089 \\
 SVM     & 0.1123 \\
 KNN     & 0.1117 \\
-CNN     & 0.1130 \\
+CNN     & \textbf{0.1130} \\
 \hline
 \end{tabular}
 \caption{Emotion prediction accuracy}
@@ -145,7 +166,7 @@ Results are shown in the table below.
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
-    XGBoost & 0.5407 \\
+    XGBoost & \textbf{0.5407} \\
     SVM     & 0.5093 \\
     KNN     & 0.5264 \\
     CNN     & 0.5206 \\
@@ -211,6 +232,70 @@ This matches the established accuracies in the song ID prediction task for this 
 Looking at the reconstructed spectrograms, we can notice that the network has not yet learned the high-resolution temporal aspects of the songs.
 It cannot mark note onsets accurately. Instead, it tends to produce smooth spectrograms with almost equally colored rows that show the average power in a frequency band.
 
+\subsection{Time-constant reconstruction}
+
+To test the hypothesis that the network learns to reconstruct an averaged spectrogram for a music fragment, we train a simplified model.
+The model has similar architecture to the main CNN model, but instead outputs an image of shape 64x1 which is then broadcasted to the desired shape of 64x64.
+With this change we also don't need the full image decoder and therefore keep just a single fully connected layer.
+
+The model is strictly less flexible, but we observe that the results achieved by it are not much worse than the results of the main model.
+Comparing these results to the main model we observe few percentage points difference in AUROC scores.
+
+\begin{figure}[h]
+  \centering
+  \textbf{Accuracy scores for time-constant reconstruction}
+  \vspace{0.3cm}
+  
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/medianrank_timeconstant.png}
+    \caption{Median rank comparison between the main model and the time-constant model. The time-constant model achieves similar performance despite its reduced flexibility.}
+    \label{fig:medianrank-timeconstant}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imgs/auroc_timeconstant.png}
+    \caption{AUROC score comparison showing that the time-constant model performs comparably to the full model, supporting the hypothesis that the network learns averaged spectrograms.}
+    \label{fig:auroc-timeconstant}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imgs/auroc_comparison.png}
+  \caption{AUROC comparison between the main reconstruction model and the time-constant model.}
+  \label{fig:auroc-comparison}
+\end{figure}
+
+\section{Attempt at decoding rhytm}
+
+Having decoded the harmonic content we look to rhytm.
+The results of full reconstruction suggest that to decode rhytm we need to use different methods.
+We take inspiration from \cite{daly} where a Bi-LSTM network is used to perform music decoding in waveform domain.
+We aim to predict an onset detection function (ODF), which is a scalar function whose picks indicate sound onsets.
+A target ODF is calculated using HFC method which responds to changes in the high frequency part of the spectrogram.
+We trained the model on 3 different EEG data types: all 129 EEG channels, only 12 channels hand-picked as relevant to music processing and 12 preprocessed ICA channels.
+Separate models are trained for subjects.
+We assess quality of predictions by calculating AUROC scores similarly to the mel reconstruction case: we compute similarity to all other ODFs and rank them.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{imgs/lstm_odf_plots.png}
+  \caption{LSTM onset detection function plots.}
+  \label{fig:lstm-odf-plots}
+\end{figure}
+
+
+In all variants, eventhough we observe training in loss, we do not observe significant results in AUROC scores. Inspecting the predictions visually leaves no doubt in failure of the method.
+We also try to overfit the model on single trial, with similar lack of results.
+
+\section{Conclusion and future work}
+
+We had achieved varied success finding features decodable from music to be: song name and music density, but not emotion label. 
+We can also reconstruct music in a form of spectrograms.
+
+One could ponder about the use of transformers for below tasks, but we realize that we have unsufficient data to train such models.
 
 % \section{EEG analysis}
 

@@ -1,4 +1,4 @@
-\appendix
+% \appendix
 
 \chapter{Ablation studies}
 
@@ -40,3 +40,8 @@ The set of channels to be picked in this ``No ICA'' case is predefined and chose
 \end{figure}
 
 The results as tested on the task of song identification in the MUSIN-G dataset are inconclusive.
+
+\section{Band power features}
+
+For most tasks we employ band power feature analysis to the EEG signal. 
+This processing step is crucial, as we are unable to train a model directly on the raw EEG signal.
