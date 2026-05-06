@@ -10,8 +10,8 @@ For the Bi-LSTM model, we skip the final band power extraction step and feed the
 We start with the task of predicting the song name of a listened-to song based on the EEG signal.
 We split the MUSIN-G dataset into recordings of 12 subjects for training and the remaining 8 subjects for testing (for CNN, half of the test set serves as the validation set).
 We then train a model to predict the song name from the EEG signal.
-We achieve the below results for each variant of the tested model.
-For the CNN model we provide the best result out of the few tested variants, described below.
+We achieve the results shown in Table~\ref{tab:song-prediction} for each variant of the tested model.
+For the CNN model we provide the best result out of the few tested variants, described in Figure~\ref{fig:cnn-channels-accuracy}.
 
 \begin{table}[h]
   \centering
@@ -31,9 +31,9 @@ For the CNN model we provide the best result out of the few tested variants, des
 \end{table}
 
 
-Our results are comparable to the study by Pandey et al.\cite{pandey}, in which researchers achieved 12.5\% mean subject accuracy (a random classifier gives \(  \frac{1}{12} = 0.08(3) \)).
+Our results are comparable to the study by Pandey et al.\cite{pandey}, in which researchers achieved 12.5\% mean subject accuracy (a random classifier gives \(  \frac{1}{12} = 0.08(3) \cdot 100\% \)).
 
-We also tested how the number of parameters influences the model's performance. We kept the architecture and varied number of convolution channels. The results are shown below.
+We also tested how the number of parameters influences the model's performance. We kept the architecture and varied number of convolution channels. The results are shown in Figure~\ref{fig:cnn-channels-accuracy}.
 
 \begin{figure}[h]
   \centering
@@ -43,10 +43,10 @@ We also tested how the number of parameters influences the model's performance. 
 \end{figure}
 
 
-In the above study, researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
+In the study by Pandey et al.\cite{pandey}, researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
 by taking the initial \( n \) seconds of each recording as training data and the remaining seconds as testing data. The study compares results that can be achieved for a few chosen \( n \) parameters (\(3, 5, 10, 20\)), achieving higher accuracy for larger training partitions.
 The results in this variant of the experiment are much higher (\( 84\% \)) than in the previous variant.
-We are able to reproduce these results, and for \( n=20 \) we achieve accuracies as shown in the table:
+We are able to reproduce these results, and for \( n=20 \) we achieve accuracies as shown in Table~\ref{tab:song-id-temporal-split}.
 
 \begin{table}[h]
   \centering
@@ -65,7 +65,7 @@ We are able to reproduce these results, and for \( n=20 \) we achieve accuracies
   \label{tab:song-id-temporal-split}
 \end{table}
 
-While the best model in the trial-wise split variant achieves 0.85\% accuracy, the best model in subject-wise split variant achieves only 0.18\%.
+While the best model in the trial-wise split variant achieves 85\% accuracy, the best model in subject-wise split variant achieves only 18\%.
 This means that the model fails to learn neural patterns that generalize across subjects.
 This poor generalization suggests that the model in this trial-wise variant does not pick up on neural correlates of the music but rather on some trial-specific aspects of the EEG recording.
 We test the hypothesis with two experiments. 
@@ -73,7 +73,7 @@ We test the hypothesis with two experiments.
 First, we run a similar experiment on the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
 The recordings share the ``emotionality'' of the listened-to music, but no listened-to song repeats across the dataset as the songs are computer-generated for each trial.
 We find that, similarly to the study, classifiers are able to predict the trial ID from the EEG signal with high accuracy. 
-The results are shown in the below table. For the CNN model we can't achieve reasonable accuracy, so we omit it. We expect the big number of labels to be the culprit.
+The results are shown in Table~\ref{tab:song-id-single-subject}. For the CNN model we can't achieve reasonable accuracy, so we omit it. We expect the big number of labels to be the culprit.
 
 \begin{table}[h]
   \centering
@@ -113,7 +113,7 @@ the one that scores the highest when calculating the approximate-subsequence-DTW
 We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
 The cost parameter specifies how much cummulative difference between the matched points of the two sequence we allow.
 With this simple method we achieve 50.83\% test accuracy.
-For comparison the results of the other models range from 0.57\% to 0.85\% and random chance is 0.08\%.
+For comparison the results of the other models range from 57\% to 85\% and random chance is 8\%.
 This means that with a much simpler method that relies purely on simple pattern matching, we are still able to achieve results getting close to the results from more complex models.
 
 % Accuracy: 61/120 = 50.83%
@@ -293,7 +293,7 @@ A target ODF is calculated using HFC method which responds to changes in the hig
 We trained the model on 3 different EEG data types: all 129 EEG channels, only 12 channels hand-picked as relevant to music processing and 12 preprocessed ICA channels.
 Separate models are trained for subjects.
 We assess quality of predictions by calculating AUROC scores similarly to the mel reconstruction case: we compute similarity to all other ODFs and rank them.
-Below figure shows an example ODF prediction.
+Figure~\ref{fig:lstm-odf-plots} shows an example ODF prediction.
 
 \begin{figure}[h]
   \centering
@@ -303,7 +303,7 @@ Below figure shows an example ODF prediction.
 \end{figure}
 
 
-In all variants, eventhough we observe the loss value to decrease with training, we do not observe significant results in AUROC scores which oscillate slightly above 0.
+In all variants, eventhough we observe the loss value to decrease with training, we do not observe significant results in AUROC scores which oscillate slightly above 0\%.
 Inspecting the predictions visually leaves no doubt in failure of the method.
 We also try to overfit the model on single trial, with similar lack of results.
 
