@@ -54,6 +54,7 @@ We are able to reproduce these results, and for \( n=20 \) we achieve accuracies
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
+    Random  &  0.0833  \\
     XGBoost & \textbf{0.85} \\
     SVM     & 0.57 \\
     KNN     & 0.64 \\
@@ -72,7 +73,7 @@ We test the hypothesis with two experiments.
 First, we run a similar experiment on the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
 The recordings share the ``emotionality'' of the listened-to music, but no listened-to song repeats across the dataset as the songs are computer-generated for each trial.
 We find that, similarly to the study, classifiers are able to predict the trial ID from the EEG signal with high accuracy. 
-The results are shown in the below table.
+The results are shown in the below table. For the CNN model we can't achieve reasonable accuracy, so we omit it. We expect the big number of labels to be the culprit.
 
 \begin{table}[h]
   \centering
@@ -80,6 +81,7 @@ The results are shown in the below table.
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
+    Random  &  1/3456  \\
     XGBoost & 0.78 \\
     SVM     & \textbf{0.91} \\
     KNN     & 0.88 \\
@@ -111,12 +113,15 @@ the one that scores the highest when calculating the approximate-subsequence-DTW
 We fit the cost allowance hyperparameter on the validation set and then test the accuracy of the method on the test set. 
 The cost parameter specifies how much cummulative difference between the matched points of the two sequence we allow.
 With this simple method we achieve 50.83\% test accuracy.
+For comparison the results of the other models range from 0.57\% to 0.85\% and random chance is 0.08\%.
+This means that with a much simpler method that relies purely on simple pattern matching, we are still able to achieve results getting close to the results from more complex models.
+
 % Accuracy: 61/120 = 50.83%
 The experiment is meant to showcase that such direct pattern matching is possible and therefore---it is possible for the model to learn it and rely on it greatly, with little generalization capability.
 
 \section{Emotion prediction}
 
-The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on Valence and Arousal axes.
+The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on a 3x3 Valence and Arousal (High, Medium, Low) grid.
 To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes that join multiple individual trials together.
 Therefore, it is easier to predict an emotion label than an identifier, as this requires less precision, but during training, the 
 reward per training step is less valuable and gives less information.
@@ -128,6 +133,7 @@ The balance does not seem to be in favor of this task, as we are unable to achie
 \hline
 Method  & Accuracy \\
 \hline
+Random  & 0.1111 \\
 XGBoost & 0.1089 \\
 SVM     & 0.1123 \\
 KNN     & 0.1117 \\
@@ -143,6 +149,7 @@ CNN     & \textbf{0.1130} \\
 Looking for musical features visible through the EEG recording, we define a ``density'' of a music snippet and, by extension, the paired EEG snippet.
 First, we mark note onsets in the music recordings. 
 We do that by looking at the music's mel spectrograms and marking the time points at which the spectrogram's energy increases significantly, weighting the changes in the high frequencies more (High-Frequency-Content method).
+For description see Section~\ref{sec:note-onset}.
 The HFC method was visually compared to other methods and chosen as seemingly best.
 
 \begin{figure}[h]
@@ -158,7 +165,7 @@ Calculating the median number, we can split the snippets into two classes: the `
 We calculate the median only on the training set and define a classification task of predicting the class of a snippet based on the paired EEG snippet.
 We hope that success in this task may be a stronger indicator that some musical features are present and can be decoded from the EEG signal.
 
-Results are shown in the table below.
+Results are shown in Table~\ref{tab:density-prediction}.
 
 \begin{table}[h]
   \centering
@@ -177,20 +184,26 @@ Results are shown in the table below.
 \end{table}
 
 \section{Music reconstruction}
+\label{sec:music-reconstruction}
 
 We attempt to reconstruct listened-to music from the EEG signal for the MUSIN-G dataset.
+Instead of reconstructing the raw waveform, the target is the mel spectrogram of the audio.
 We treat this task as an extension of the song ID prediction task: if a model can learn to predict a song, can it learn to predict the specific fragment of a song and generate its mel spectrogram?
 Our architecture of the $CNN_{reconstruction}$ model used for this task reflects this idea. 
 It can be seen as an encoder and decoder model, with skip connections, where the encoder is similar to the $CNN_{classification}$ model.
 
 Reflecting the results in the song identification tasks, we observe that the model is able to reconstruct music to some extent in the variant where 
 single-subject recordings are split into training and test partitions by assigning the initial 20s of each recording to training.
-The reconstructions are accurate enough to allow for meaningful classification (see figures below). 
+To judge the value of reconstructions we use a classification test.
+Namely we compare the generated spectrogram (with sum squared distance) with spectrograms from the dataset, including the target one.
+We then calculate AUROC score: what is the position of the target spectrogram in a list sorted by distance?
+If the target spectrogram appears early in the list, it means that the generated is more similar to the target that to most other spectrograms, which can be a measure of generation quality.
+The reconstructions are accurate enough to allow for meaningful classification (see Figure~\ref{fig:reconstructed-spectrograms}). 
 
 In the cross-subject variant, where we investigate the ability for cross-subject generalization and a different portion of subjects is used for training and testing, 
 we don't achieve any meaningful results in the reconstruction task. 
 This matches the established accuracies in the song ID prediction task for this variant, which were much lower and were all between 12\% and 18\%, compared to the 57\% to 85\% range.
-
+See the AUROC plots in Figures~\ref{fig:auroc-median-rank} and~\ref{fig:auroc-score}.
 
 \begin{figure}[h]
   \centering
@@ -234,12 +247,14 @@ It cannot mark note onsets accurately. Instead, it tends to produce smooth spect
 
 \subsection{Time-constant reconstruction}
 
-To test the hypothesis that the network learns to reconstruct an averaged spectrogram for a music fragment, we train a simplified model.
-The model has similar architecture to the main CNN model, but instead outputs an image of shape 64x1 which is then broadcasted to the desired shape of 64x64.
+To test the hypothesis that the network learns to reconstruct a time-averaged spectrogram for a music fragment, we train a simplified model.
+The model has similar architecture to the main CNN model, but instead outputs an image of shape 64x1 which is then broadcasted to the desired shape of 64x64, meaning the spectrogram doesn't vary in time.
 With this change we also don't need the full image decoder and therefore keep just a single fully connected layer.
+An architecture diagram is shown in the methods section.
 
 The model is strictly less flexible, but we observe that the results achieved by it are not much worse than the results of the main model.
-Comparing these results to the main model we observe few percentage points difference in AUROC scores.
+Comparing these results to the main model we observe few percentage points difference in AUROC scores (see Figures~\ref{fig:medianrank-timeconstant} and~\ref{fig:auroc-timeconstant}).
+
 
 \begin{figure}[h]
   \centering
@@ -271,13 +286,14 @@ Comparing these results to the main model we observe few percentage points diffe
 \section{Attempt at decoding rhytm}
 
 Having decoded the harmonic content we look to rhytm.
-The results of full reconstruction suggest that to decode rhytm we need to use different methods.
+The results of full reconstruction (see Section~\ref{sec:music-reconstruction}) suggest that to decode rhytm we need to use different methods.
 We take inspiration from \cite{daly} where a Bi-LSTM network is used to perform music decoding in waveform domain.
-We aim to predict an onset detection function (ODF), which is a scalar function whose picks indicate sound onsets.
+We aim to predict an onset detection function (ODF), which is a scalar function whose picks indicate sound onsets (see Section~\ref{sec:odf}).
 A target ODF is calculated using HFC method which responds to changes in the high frequency part of the spectrogram.
 We trained the model on 3 different EEG data types: all 129 EEG channels, only 12 channels hand-picked as relevant to music processing and 12 preprocessed ICA channels.
 Separate models are trained for subjects.
 We assess quality of predictions by calculating AUROC scores similarly to the mel reconstruction case: we compute similarity to all other ODFs and rank them.
+Below figure shows an example ODF prediction.
 
 \begin{figure}[h]
   \centering
@@ -287,7 +303,8 @@ We assess quality of predictions by calculating AUROC scores similarly to the me
 \end{figure}
 
 
-In all variants, eventhough we observe training in loss, we do not observe significant results in AUROC scores. Inspecting the predictions visually leaves no doubt in failure of the method.
+In all variants, eventhough we observe the loss value to decrease with training, we do not observe significant results in AUROC scores which oscillate slightly above 0.
+Inspecting the predictions visually leaves no doubt in failure of the method.
 We also try to overfit the model on single trial, with similar lack of results.
 
 \section{Conclusion and future work}

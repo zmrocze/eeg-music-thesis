@@ -1,0 +1,66 @@
+PMID- 29322469
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+LR  - 20200930
+IS  - 2198-4018 (Print)
+IS  - 2198-4026 (Electronic)
+IS  - 2198-4026 (Linking)
+VI  - 5
+IP  - 1
+DP  - 2018 Mar
+TI  - Removal of muscular artifacts in EEG signals: a comparison of linear 
+      decomposition methods.
+PG  - 13-22
+LID - 10.1007/s40708-017-0074-6 [doi]
+AB  - The most common approach to reduce muscle artifacts in electroencephalographic 
+      signals is to linearly decompose the signals in order to separate artifactual 
+      from neural sources, using one of several variants of independent component 
+      analysis (ICA). Here we compare three of the most commonly used ICA methods 
+      (extended Infomax, FastICA and TDSEP) with two other linear decomposition methods 
+      (Fourier-ICA and spatio-spectral decomposition) suitable for the extraction of 
+      oscillatory activity. We evaluate the methods' ability to remove event-locked 
+      muscle artifacts while maintaining event-related desynchronization in data from 
+      18 subjects who performed self-paced foot movements. We find that all five 
+      analyzed methods drastically reduce the muscle artifacts. For the three ICA 
+      methods, adequately high-pass filtering is very important. Compared to the effect 
+      of high-pass filtering, differences between the five analyzed methods were small, 
+      with extended Infomax performing best.
+FAU - Frølich, Laura
+AU  - Frølich L
+AD  - Technical University of Denmark, Lyngby, Denmark. laura.frolich@gmail.com.
+FAU - Dowding, Irene
+AU  - Dowding I
+AUID- ORCID: 0000-0002-9682-2273
+AD  - Technische Universität Berlin, Berlin, Germany. irenedowding@web.de.
+LA  - eng
+PT  - Journal Article
+DEP - 20180110
+PL  - Germany
+TA  - Brain Inform
+JT  - Brain informatics
+JID - 101673751
+PMC - PMC5893498
+OTO - NOTNLM
+OT  - Artifact removal
+OT  - Blind source separation (BSS)
+OT  - Electroencephalogram (EEG)
+OT  - Filtering
+OT  - Independent component analysis (ICA)
+OT  - Muscle artifacts
+COIS- The authors declare that they have no conflict of interest.
+EDAT- 2018/01/13 06:00
+MHDA- 2018/01/13 06:01
+PMCR- 2018/01/10
+CRDT- 2018/01/12 06:00
+PHST- 2017/09/25 00:00 [received]
+PHST- 2017/12/16 00:00 [accepted]
+PHST- 2018/01/13 06:00 [pubmed]
+PHST- 2018/01/13 06:01 [medline]
+PHST- 2018/01/12 06:00 [entrez]
+PHST- 2018/01/10 00:00 [pmc-release]
+AID - 10.1007/s40708-017-0074-6 [pii]
+AID - 74 [pii]
+AID - 10.1007/s40708-017-0074-6 [doi]
+PST - ppublish
+SO  - Brain Inform. 2018 Mar;5(1):13-22. doi: 10.1007/s40708-017-0074-6. Epub 2018 Jan 
+      10.

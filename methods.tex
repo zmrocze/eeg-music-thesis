@@ -48,11 +48,26 @@ This acts like a data augmentation method.
 To avoid the Birthday Problem when randomly sampled segments often strongly overlap over part of the full recording, we 
 use stratified sampling method, where first one of \( k \) segments is picked (one after another) and then a random snippet starting within chosen segment is sampled, spreading the distribution more evenly across the whole recording.
 
+\section{Music processing}
 
+\subsection{Spectrogram}
 
-\section{Note onset feature extraction}
+A music spectrogram is a visual representation of the spectrum of frequencies in a sound over time, created by applying a short-time Fourier transform (STFT) to the audio signal.
+It is a 2D representation where the x-axis represents time, the y-axis represents frequency, and the intensity or color represents the magnitude of the frequency components at each point in time.
+We specifically utilize mel spectrograms, which applies logarithmic scaling to the intensity values to better match human auditory perception.
+
+\subsection{ODF function}
+\label{sec:odf}
+
+An odf function is a specific filter on a spectrogram, that responds to the intensity of change in the spectrogram over time.
+So, when a spectrogram is relatively constant, the function has values close to 0 and the values are high when there's intense change in the spectrogram, 
+where the higher frequency components are counted with stronger weight.
+
+\subsection{Note onset feature extraction}
+\label{sec:note-onset}
 
 For the task of detecting note onsets, we use the essentia\cite{essentia} library with its HFC onset detection method to transform the raw wave audio signal into a list of note onset start times.
+It first calculates the ODF function and then finds peaks in the function values.
 
 \section{Models}
 
@@ -68,6 +83,9 @@ For a further discussion on the KNN, SVM, and XGBoost models, we refer the reade
 \subsection{CNN}
 
 We define two related CNN networks: for the classification task and for the music reconstruction task.
+
+\subsubsection{Classification CNN}
+
 The classification network is convolutional neural network with 3 convolutional layers and a fully-connected layer.
 It is designed to work with EEG images after preprocessing, which results in 1s snippets of shape \( 60\times 10\).
 The model has 35,188 parameters.
@@ -109,12 +127,24 @@ Linear & - & $[B, 896] \to [B, 4]$ \\
 \label{tab:cnn-layers}
 \end{table}
 
+\subsubsection{Reconstruction CNN}
 
 The reconstruction network uses a U-Net style architecture with a 3-layer contracting encoder, a middle bottleneck fully connected layer, and a 3-layer expanding decoder.
 The encoder has the same architecture as the classifier model, and the decoder is correspondingly a 3-layer upsampling convolutional network.
 There are skip connections between matching layers of the encoder and decoder.
 Because the input has a different dimensionality than the output and consequently, the outputs of the encoder and decoder layers differ in shape, the skip connections also apply interpolation to match the dimensions.
 The model has 143,280 parameters.
+
+We also define a simplified version of the reconstruction network, which aims to reconstruct spectrograms which are constant in the time dimension.
+This significantly reduces complexity and allows to remove decoder part of the model.
+Both full (CNNReconstruction) and simplified (CNNReconstructionMel) architectures are visible in Figure~\ref{fig:cnn-diagrams}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{imgs/cnn_diagrams.png}
+  \caption{Architecture diagrams of the full reconstruction CNN (U-Net style with encoder, bottleneck, and decoder with skip connections) and the simplified time-constant variant (encoder followed by a single fully connected layer producing a $64\times1$ output broadcasted to $64\times64$).}
+  \label{fig:cnn-diagrams}
+\end{figure}
 
 \begin{table}[h]
 \centering
