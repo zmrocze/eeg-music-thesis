@@ -1,15 +1,21 @@
 
 \chapter{Methods}
 
+Our methods focus on analyzing the EEG signal in a way that enables prediction and decoding tasks related to music.
+We present our preprocessing pipeline and the models used for various tasks. We also show our music preprocessing methods.
+
 \section{EEG Preprocessing}
 
-First, we filter the EEG signal with a notch filter at the line frequency (50Hz).
-Then we apply a bandpass filter between 0.5Hz and 50Hz. 
-We rereference the data.
-Then we apply the ICA transform, removing artifact components and reducing the dimensionality from 128 channels to 12.
-We calculate the band power for every ICA component and the standard EEG frequency bands, and concatenate the results. 
+We preprocess the EEG signal based on established practices of working with such signal.
+First, we filter the EEG signal with a notch filter at the line frequency (50Hz) to filter out the electric grid noise.
+Then we apply a bandpass filter between 0.5Hz and 50Hz, where the range is chosen based on years of research showing semantic relavance of frequencies in this range in various neuroscience studies. 
+We rereference the data (level based on averaged activity across channels).
+Then we apply the ICA transform, removing artifact components and reducing the dimensionality from 128 channels to 12, what increases signal to noise ratio.
+We calculate the band power for every ICA component and the standard EEG frequency bands, and concatenate the results.
+This is similar to the work of \cite{lawhatre} and \cite{guess} where EEG signal is processed for similar classification tasks.
 Without this step, we observe that the models struggle to train.
-Before concatenation, we apply z-score normalization per frequency band.
+Before concatenation, we apply z-score normalization per frequency band. We tested no normalization and normalization already after concatenation and this yielded best results.
+The whole preprocessing pipeline is comparable to the one used with success in \cite{pandey}.
 
 \begin{figure}[h]
   \centering
@@ -43,8 +49,11 @@ Before concatenation, we apply z-score normalization per frequency band.
 \end{figure}
 
 During training, we sample an EEG signal snippet of 3 seconds in length from the full recording.
+It is this shorter snippet that is being classified or decoded later in our tasks of interest.
+In the classification tasks the snippet inherits the label from the full song.
 It was found that varying the length between 3s, 5s, 10s, and 20s impacts classification performance, with longer snippets yielding better accuracy scores\cite{pandey}.
-This acts like a data augmentation method.
+% This acts like a data augmentation method.
+We do this to increase the number of data points in datasets where we get as little as just 12 different songs.
 To avoid the Birthday Problem when randomly sampled segments often strongly overlap over part of the full recording, we 
 use stratified sampling method, where first one of \( k \) segments is picked (one after another) and then a random snippet starting within chosen segment is sampled, spreading the distribution more evenly across the whole recording.
 
@@ -66,29 +75,39 @@ where the higher frequency components are counted with stronger weight.
 \subsection{Note onset feature extraction}
 \label{sec:note-onset}
 
+Note onsets are timings for when the note start. 
 For the task of detecting note onsets, we use the essentia\cite{essentia} library with its HFC onset detection method to transform the raw wave audio signal into a list of note onset start times.
 It first calculates the ODF function and then finds peaks in the function values.
 
 \section{Models}
 
 We use five different model types: KNN, SVM, XGBoost, a Convolutional Neural Network and an LSTM.
+This allows us to compare simpler models like KNN with more complex models like neural networks, with XGBoost as a reasonable middle ground that's known to perform well on a range of machine learning tasks where data is not greatly available.
+The KNN model is one of the simpler models applicable for the task, SVM model is an extensions of the very standard linear regression and XGBoost is a more modern tree ensamble method performing well in many benchmarks.
+The neural network architectures are chosen based on the task characteristics.
+After our preprocessing pipeline, the EEG signal is represented as a 2D tensor and this makes up the input to our models. 
+The x-axis represents time and the y-axis represents the frequency dimension.
 
-\subsection{KNN, SVM, XGBoost}
+\subsection{Non-Deeplearning Methods: KNN, SVM, XGBoost}
 
+As for the classical methods we employ KNN, SVM and XGBoost.
 We employ a KNN model, where a prediction is given by an averaged values of 5 nearest neighbors in euclidean space.
 SVM or Support Vector Machines model is a kernel method, where we use the 'Radial Basis Function' kernel.
 The XGBoost model is a tree ensamble method, in our case 100 decision trees with a maximum depth of 6 are used together to vote for a prediction.
 For a further discussion on the KNN, SVM, and XGBoost models, we refer the reader to Sarker\cite{sarker}\cite{sarker2}.
 
-\subsection{CNN}
+\subsection{Convolutional Neural Network (CNN)}
 
 We define two related CNN networks: for the classification task and for the music reconstruction task.
 
 \subsubsection{Classification CNN}
 
-The classification network is convolutional neural network with 3 convolutional layers and a fully-connected layer.
+The classification network is convolutional neural network\cite{cite-cnn} with 3 convolutional layers and a fully-connected layer.
+The number of layers and the overall architecture and layer choice is a suggestion from the EEGNet\cite{eegnet} model, often used in processing raw EEG signal in similar tasks.
+This network architecture fits the task description, where the goal is to classify essentially a 2d image.
 It is designed to work with EEG images after preprocessing, which results in 1s snippets of shape \( 60\times 10\).
-The model has 35,188 parameters.
+The model has 35,188 parameters. 
+In Table~\ref{tab:cnn-layers} we differentiate between 2d convolutions applied across time and frequency dimensions with names Conv2D (time) and Conv2D (freq).
 
 % table with layers of cnn 
 \begin{table}[h]
@@ -223,9 +242,12 @@ Conv2D & $1 \times 1$ & $[B, 2, 64, 64] \to [B, 1, 64, 64]$ \\
 \end{table}
 
 
-\subsection{DTW}
+\subsection{Dynamic Time Warping (DTW)}
 
 DTW is an algorithm that finds an optimal alignment between two sequences.
+The input to the algorithm are two sequences of numbers of arbitrary length and the output is a list of pairs of indices,
+which pair indices from the first sequence with indices from the second sequence.
+This pairing is an alignment, an optimal alignment is such that optimizes the sum of differences between the paired elements under the specified constraints.
 
 We employ a generalized version called approximate-subsequence-DTW, which can be defined by:
 \begin{enumerate}
@@ -236,13 +258,24 @@ We employ a generalized version called approximate-subsequence-DTW, which can be
 
 This means that the algorithm pairs points from one sequence, or just an infix of it, with points from the other sequence.
 As many points are matched as is possible within the cost constraint, which specifies what is the sum of differences between the matched points.
+So, in our case the cost is a constraint and what we optimize is the length of the sequence.
 The algorithm is a variant of the standard DTW dynamic programming algorithm.
 
 \subsection{LSTM}
 
-LSTM, or more specifically Bi-LSTM (an LSTM with bidirectional information flow), is a recurrent neural network operating on raw EEG timeseries.
+LSTM, or more specifically Bi-LSTM\cite{lstm} (an LSTM with bidirectional information flow), is a recurrent neural network operating on raw EEG timeseries.
 We use variants operating on 12 or 129 EEG channels, with 2 hidden layers and 256 hidden units.
-The output of the network is a scalar.
+This mimicks the parameters from \cite{daly} where researchers attempt a related and similar task of music decoding in the wave form.
+The output of the network is a a tensor of length of the time dimension.
+For every time step we output a scalar, which is during training interpreted as a value of the odf function at that step and the loss depends on the difference between the calculated and the real odf.
+We choose the model as it's a neural network capable of working with sequential data like we have here. 
+We also take suggestion from the work\cite{daly} that uses same architecture to tackle a similar problem of music decoding from eeg as raw waveform.
+
+
+\section{Training}
+
+We train the neural network models for a predefined set of epochs, that was over a couple of trials found to be enough to guarantee convergance of loss function.
+We track metrics like accuracy, AUROC or loss on the test set.
 
 % \section{Neurals Networks}
 

@@ -4,9 +4,13 @@
 \section{Music classification}
 
 Classification of listened music based on EEG signal has been tackled in various forms by several researchers.
+Here we consider tasks where a sing title or another song property is to be predicted from the EEG signal.
+Researchers classify either full eeg recordings from listening to the whole song, just a random snippet cut from the recording or a 
+specific snippet cut from the recording at a particular point in time with respect to the start of stimulus (song playing) called ERP.
 
 As early as 2011, a linear logistic-regression classifier was successfully used to classify ERP (event-related potential) segments of EEG signals into listened-to songs\cite{rebecca}.
-The focus on ERPs means that every trial, which is slightly over 3 seconds long, acts as its own snippet for classification. Therefore, the EEG snippets are aligned in time---all starting when the music began playing in the experimental scenario.
+The focus on ERPs means that every trial, which is slightly over 3 seconds long, acts as its own snippet for classification.
+Therefore, the EEG snippets are aligned in time---all starting when the music began playing in the experimental scenario.
 
 In a similar paradigm, Sterni et al.\cite{sterni} classify listened-to music using first a dimensionality reduction technique to learn signal components, and then a CNN with a single convolutional layer.
 They also succeed in classifying trials based on the meter of a song (3/4 versus 4/4).
@@ -28,6 +32,8 @@ as calculated by a mathematical model of musical expectation in sheet music.
 For every music track, the predicted matching EEG is compared against the real EEG signal, and the one with the strongest match is chosen.
 Separate models were trained for the listened and imagined music, but it was also shown that they relate to each other, with the listened version being a lagged version of the imagined one.
 
+Even though there is some traction in tackling this challenge, the struggles and the obtained often lackluster results show that the problem is difficult.
+
 \section{Representation learning}
 
 Stober et al. approach a more general problem of learning representations of the EEG signal with a convolutional autoencoder\cite{stober}.
@@ -35,8 +41,8 @@ To combat the small and noisy dataset, the model is trained on a given trial to 
 They are able to train CNN and SVC classifiers to predict the song ID from the hidden representation of the autoencoder.
 
 This raises the question of whether a common representation space could be found for both music and the EEG signal, or if the two can be related to each other.
-Researchers attempted to answer the second question by comparing the distance matrices within the sets of extracted audio features and extracted EEG features\cite{foster}.
-The study reports mixed results.
+Researchers attempted to answer the second question by comparing the distance matrices within the sets of extracted audio features and extracted EEG features\cite{foster} in a style of an ABX test.
+The study reports both found correlation between the two representations and some although poor classification performance. They noted a need for repeated testing to get more certainty about the result.
 
 % \cite{rebecca} - 2011, quadratically regularized linear logistic-regression classifier, 3s event-aligned EEG segments
 
@@ -58,12 +64,14 @@ The study reports mixed results.
 \section{Music reconstruction}
 
 Works of the last few years tackled the harder problem of reconstructing listened music from the EEG signal.
+This means either full decoding of the music's waveform or decoding into a spectrogram, which can be further decoded into a waveform with a vocoder.
 
 The simplest approach seems to be directly training a function that maps the EEG signal to music.
 A 2022 study attempts this with a 5-layer CNN model\cite{kello}.
 The network is fed 1s snippets, randomly sampled from the full recording and assigned to the training set with a 75\% probability, and outputs audio in the form of a mel spectrogram. 
 The accuracy of the model is assessed by training a classifier to predict the song ID from the reconstructed music, achieving over 80\% accuracy.
-The model outputs were also evaluated by human listeners, who were able to successfully determine which of two presented audio clips corresponded to a third target sound.
+The model outputs were also evaluated by human listeners using a vocoder to transform the spectrograms to waves, who were able to successfully determine which of two presented audio clips corresponded to a third target sound.
+This means the model outputs were good enough to be perceived by humans, though this is not always the case here and often the model output is enough for classification but wouldn't remind of music to a human ear still.
 
 The diffusion approach to music generation was tested in a 2025 study\cite{postolache}.
 The music is generated via a diffusion process in the latent space, where initial noise is iteratively refined with a denoising network.

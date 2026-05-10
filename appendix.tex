@@ -44,4 +44,8 @@ The results as tested on the task of song identification in the MUSIN-G dataset 
 \section{Band power features}
 
 For most tasks we employ band power feature analysis to the EEG signal. 
+This is almost the last step of our preprocessing pipeline, only before normalization and sampling.
 This processing step is crucial, as we are unable to train a model directly on the raw EEG signal.
+We attempted song identification---the simplest task---and observed models difficulty to 
+not only converge into a meaningful accuracy, but even to minimize the loss function in the first place.
+Testing the non-deeplearning methods was omitted due to huge memory use and computation time.

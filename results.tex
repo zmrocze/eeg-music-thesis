@@ -4,6 +4,7 @@
 We attempt to decode progressively harder features of the music signal from the EEG recordings.
 We utilize the preprocessing pipeline described in the previous section.
 For the Bi-LSTM model, we skip the final band power extraction step and feed the filtered EEG signal directly to the network.
+We show results on the test set.
 
 \section{Song name prediction}
 
@@ -22,11 +23,11 @@ For the CNN model we provide the best result out of the few tested variants, des
     Random  &  0.0833  \\
     KNN     & 0.1374 \\
     SVM     & 0.1229 \\
-    XGBoost & 0.1668 \\
-    CNN (best)      & \textbf{0.1802} \\
+    XGBoost & \textbf{0.1980} \\
+    CNN (best)      & 0.1802 \\
     \hline
   \end{tabular}
-  \caption{Song name prediction accuracy: subject-wise split.}
+  \caption{Song name prediction accuracy in the MUSIN-G dataset: subject-wise split.}
   \label{tab:song-prediction}
 \end{table}
 
@@ -42,6 +43,15 @@ We also tested how the number of parameters influences the model's performance. 
   \label{fig:cnn-channels-accuracy}
 \end{figure}
 
+
+As the predictions relate just a single snippet sampled from the recording, 
+it is reasonable to ask what if multiple snippet predictions for snippets sampled from a single full song would be used to vote on a prediction for the full song recording.
+With the assumption that the individual votes are independent, the overall accuracy should increase, apparently with no limit as we sample more and more snippets to use for voting and predicting.
+In practice when we sample a lot of snippets, they start to overlap so the contributions are not independent.
+But what we observe is that the accuracy does not increase or increases very slightly.
+For an experiment we use the XGBoost and use it to give predictions for a 100 snippets sampled from a song and use voting to give a prediction for the whole song.
+We expected the accuracy to increase significantly. Instead we observe just 20.83\% accuracy of the ensamble.
+This is strong indicator that the predictions are made based on a feature repeated across all samples, which may mean it is some particular type of noise that the model focuses at.
 
 In the study by Pandey et al.\cite{pandey}, researchers also tested scores achieved in a different testing paradigm. They split the MUSIN-G dataset into training and testing 
 by taking the initial \( n \) seconds of each recording as training data and the remaining seconds as testing data. The study compares results that can be achieved for a few chosen \( n \) parameters (\(3, 5, 10, 20\)), achieving higher accuracy for larger training partitions.
@@ -73,7 +83,8 @@ We test the hypothesis with two experiments.
 First, we run a similar experiment on the BCMI-training dataset. The dataset contains from 144 up to 432 trials recorded for a single subject.
 The recordings share the ``emotionality'' of the listened-to music, but no listened-to song repeats across the dataset as the songs are computer-generated for each trial.
 We find that, similarly to the study, classifiers are able to predict the trial ID from the EEG signal with high accuracy. 
-The results are shown in Table~\ref{tab:song-id-single-subject}. For the CNN model we can't achieve reasonable accuracy, so we omit it. We expect the big number of labels to be the culprit.
+The results are shown in Table~\ref{tab:song-id-single-subject}. 
+For the CNN model we can't achieve reasonable accuracy. The model fails to minimize the loss function or reach any optimum. We expect the big number of labels to be the culprit.
 
 \begin{table}[h]
   \centering
@@ -85,7 +96,7 @@ The results are shown in Table~\ref{tab:song-id-single-subject}. For the CNN mod
     XGBoost & 0.78 \\
     SVM     & \textbf{0.91} \\
     KNN     & 0.88 \\
-    CNN      & ---    \\
+    CNN      & 0.001    \\
     \hline
   \end{tabular}
   \caption{Song id prediction experiment in the BCMI-training dataset.}
@@ -120,6 +131,8 @@ This means that with a much simpler method that relies purely on simple pattern 
 The experiment is meant to showcase that such direct pattern matching is possible and therefore---it is possible for the model to learn it and rely on it greatly, with little generalization capability.
 
 \section{Emotion prediction}
+
+% TODO: eksperyment osi. eksperyment topline spektrogram. ignored?
 
 The BCMI-training dataset is made of computer-generated snippets of music. These musical snippets are tagged with emotionality labels, one of 9 possibilities arranged on a 3x3 Valence and Arousal (High, Medium, Low) grid.
 To compare the difficulty of this task with previous tasks, we can think of emotionality labels as abstraction classes that join multiple individual trials together.
@@ -306,13 +319,6 @@ Figure~\ref{fig:lstm-odf-plots} shows an example ODF prediction.
 In all variants, eventhough we observe the loss value to decrease with training, we do not observe significant results in AUROC scores which oscillate slightly above 0\%.
 Inspecting the predictions visually leaves no doubt in failure of the method.
 We also try to overfit the model on single trial, with similar lack of results.
-
-\section{Conclusion and future work}
-
-We had achieved varied success finding features decodable from music to be: song name and music density, but not emotion label. 
-We can also reconstruct music in a form of spectrograms.
-
-One could ponder about the use of transformers for below tasks, but we realize that we have unsufficient data to train such models.
 
 % \section{EEG analysis}
 

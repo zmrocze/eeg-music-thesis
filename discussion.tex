@@ -1,8 +1,10 @@
 
-\chapter{Discussion}
+\chapter{Conclusion and Future Work}
 
 We have shown the capability of machine learning models to extract music features from EEG data.
+We had achieved varied success finding features decodable from music to be: song name and music density, but not emotion label. 
 We have succeeded in the tasks of song identification, song reconstruction, and a proposed task of music ``density'' prediction.
+We can reconstruct music in a form of spectrograms.
 We have shown applicability of our preprocessing pipeline to machine learning tasks relating music and EEG signals.
 
 Nevertheless, the capability seems limited.
@@ -19,3 +21,10 @@ We weren't able to perform rhythm decoding.
 
 The contribution of this work is to demonstrate that machine learning models can extract musically meaningful features from EEG data.
 By comparing performance at various tasks using related methods and analyzing the results, we understood better the sources of difficulty in decoding music from EEG.
+
+\section{Future Work}
+
+One could ponder about the use of transformers for below tasks, but we realize that we have unsufficient data to train such models.
+This suggests that techniques of data augmentation could be very helpful here.
+It is also worth exploring different model architectures for the given tasks including models already pre-trained on EEG signal.
+Specifically, use of audio diffusion models conditioned on EEG signal seems like a promising direction, explored in \cite{postolache}.
