@@ -1,5 +1,6 @@
 
 \chapter{Experiments}
+\label{chap:experiments}
 
 We attempt to decode progressively harder features of the music signal from the EEG recordings.
 We utilize the preprocessing pipeline described in the previous section.
@@ -157,6 +158,11 @@ CNN     & \textbf{0.1130} \\
 \label{tab:emotion-prediction}
 \end{table}
 
+Similarly to the experiment of song prediction, here we also check what happens if we let 100 snippets "vote" for prediction to the full song.
+That is, we use the trained model on short snippets to classify 100 short snippets and pick the majority vote as the emotion prediction for the full song.
+The accuracy of prediction in such experiment is 11.57\% which is not significantly greater than the random accuracy.
+With this experiment we conclude a fail in the task of song emotion label prediction.
+
 \section{Music ``density'' prediction}
 
 Looking for musical features visible through the EEG recording, we define a ``density'' of a music snippet and, by extension, the paired EEG snippet.
@@ -186,6 +192,7 @@ Results are shown in Table~\ref{tab:density-prediction}.
     \hline
     \textbf{Model} & \textbf{Accuracy} \\
     \hline
+    Random  & 0.5 \\
     XGBoost & \textbf{0.5407} \\
     SVM     & 0.5093 \\
     KNN     & 0.5264 \\
